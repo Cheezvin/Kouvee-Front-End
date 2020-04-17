@@ -64,7 +64,8 @@ export default {
         }
     },
     created() {
-         axios.get("http://luxinoire.com/api/showJenisHewan").then(response => {
+        this.$user.role = this.$cookies.get(this.$user).role
+        axios.get("http://luxinoire.com/api/showJenisHewan").then(response => {
         this.temp = response.data
         for(var i in response.data) {
             if(this.temp[i].logAksi == "Deleted") {

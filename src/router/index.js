@@ -16,16 +16,18 @@ var firebaseConfig = {
 };
 Vue.prototype.fb = firebase.initializeApp(firebaseConfig);
 Vue.prototype.$isLogin = Vue.observable({ value: 'logout' });
-Vue.prototype.$user = {};
-Vue.prototype.$token = 'default';
+Vue.prototype.$date = Vue.observable({ value: 'default' });
+Vue.prototype.$incrementP = Vue.observable({ value: 1 });
+Vue.prototype.$incrementL = Vue.observable({ value: 1 });
+Vue.prototype.$user = Vue.observable({role: ''});
 Vue.prototype.$adminDrawer = Vue.observable({ value: false });
 Vue.prototype.$customerBar = Vue.observable({ value: false });
 Vue.use(VueRouter)
 Vue.use(VueCookies)
-Vue.$cookies.config('1h')
 
 //Components and View
 import Login from '../views/Login.vue'
+import Welcome from '../components/WelcomePage.vue'
 import ProdMan from '../views/ProductManage.vue'
 import LayMan from '../views/LayananManage.vue'
 import Produk from '../components/ProductList.vue'
@@ -40,12 +42,33 @@ import JenisHewan from '../views/JenisHewanManage.vue'
 import DelJH from '../components/DeletedJenisHewan.vue'
 import Hewan from '../views/HewanManage.vue'
 import DelHewan from '../components/DeletedHewan.vue'
+import TPP from '../views/TPP.vue'
+import TPPList from '../components/TPPList.vue'
+import DelTPP from '../components/DeletedTPP.vue'
+import TPL from '../views/TPL.vue'
+import TPLList from '../components/TPLList.vue'
+import DelTPL from '../components/DeletedTPL.vue'
 
 const routes = [
   {
     path: '/',
     name: 'ProductList',
     component: Produk
+  },
+  {
+    path: '/menu',
+    name: 'Welcome Page',
+    component: Welcome
+  },
+  {
+    path: '/menu-tpp',
+    name: 'Transaksi Produk',
+    component: TPP
+  },
+  {
+    path: '/menu-tpl',
+    name: 'Transaksi Layanan',
+    component: TPL
   },
   {
     path: '/menu-supplier',
@@ -78,6 +101,26 @@ const routes = [
     component: DelCust
   },
   {
+    path: '/menu/deleted-tpp',
+    name: 'DeletedTPP',
+    component: DelTPP
+  },
+  {
+    path: '/menu/tpp-list',
+    name: 'TPPList',
+    component: TPPList
+  },
+  {
+    path: '/menu/deleted-tpl',
+    name: 'DeletedTPL',
+    component: DelTPL
+  },
+  {
+    path: '/menu/tpl-list',
+    name: 'TPLList',
+    component: TPLList
+  },
+  {
     path: '/menu/deleted-ukuran',
     name: 'DeletedUkuranHewan',
     component: DelUH
@@ -98,7 +141,7 @@ const routes = [
     component: Pegawai
   },
   {
-    path: '/menu',
+    path: '/menu-product',
     name: 'Product',
     component: ProdMan
   },

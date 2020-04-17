@@ -18,7 +18,8 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer />
-                <v-btn color="primary" @click="login">Login</v-btn>
+                <v-btn color="primary" class="mb-3 py-4 px-4" @click="login">Login</v-btn>
+                <v-spacer />
               </v-card-actions>
             </v-card>
           </v-col>
@@ -51,13 +52,14 @@ import axios from 'axios';
           alert("Nama atau Password tidak boleh kosong")
         }
         else {
+          this.err = ''
           axios.post("http://luxinoire.com/api/login", {
               nama: this.name,
               password: this.pass,
           })
           .then((response) => {
             console.log(response.data)
-            this.$cookies.set(this.$user, response.data)
+            this.$cookies.set(this.$user, response.data, "1h")
           })
           .catch((error) => {
             console.log(error.response.data.error)
@@ -70,7 +72,13 @@ import axios from 'axios';
               alert("Nama atau Password Salah")
             }
             else {
-              self.$cookies.set(self.$isLogin.value, 'Login')
+              self.$cookies.set(self.$isLogin.value, 'Login', "1h")
+              let current_datetime = new Date()
+              if(self.$cookies.get(self.$date.value) != current_datetime.getDate()) {
+                self.$cookies.set(self.$date.value, current_datetime.getDate(), "1d")
+                self.$cookies.set(self.$incrementP.value, 1, "1d")
+                self.$cookies.set(self.$incrementL.value, 1, "1d")
+              }
               self.$router.push("/menu")
             }
           },2000)

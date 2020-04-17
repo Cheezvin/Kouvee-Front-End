@@ -2,15 +2,15 @@
   <v-app style="background-color: #e7e7e7;" >
 
     <!--Customer-->
-    <v-app-bar v-if="$customerBar.value" app  color="primary" dark >
-      <div class="d-flex align-left mb-2">
+    <v-app-bar v-if="$customerBar.value" app  color="primary" dark>
+      <div class="d-flex align-left mb-2" to="/layanan">
         <v-img
-          alt="Vuetify Name"
           class="shrink mt-1 hidden-sm-and-down"
           contain
           min-width="100"
           src="../assets/logokouvee.png"
           width="130"
+          to="/layanan"
         />
       </div>
       <v-spacer/>
@@ -35,33 +35,38 @@
     <div v-if="$adminDrawer.value">
     <v-navigation-drawer v-model="drawer" app>
       <v-list dense>
-        <v-list-item to="/menu">
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title class="text-center font-weight-black">Main Data</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item to="/menu-product" v-if="$user.role == 'Admin'">
           <v-list-item-action >
-            <v-icon>mdi-home</v-icon>
+            <v-icon>mdi-cart</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Produk</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item to="/menu-layanan">
+        <v-list-item to="/menu-layanan" v-if="$user.role == 'Admin'">
           <v-list-item-action>
-            <v-icon>mdi-mail</v-icon>
+            <v-icon>mdi-needle</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Layanan</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item to="/menu-pegawai">
+        <v-list-item to="/menu-pegawai" v-if="$user.role == 'Admin'">
           <v-list-item-action>
-            <v-icon>mdi-mail</v-icon>
+            <v-icon>mdi-human-male</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Pegawai</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item to="/menu-supplier">
+        <v-list-item to="/menu-supplier" v-if="$user.role == 'Admin'">
           <v-list-item-action>
-            <v-icon>mdi-car</v-icon>
+            <v-icon>mdi-truck</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Supplier</v-list-item-title>
@@ -69,7 +74,7 @@
         </v-list-item>
         <v-list-item to="/menu-customer">
           <v-list-item-action>
-            <v-icon>mdi-human</v-icon>
+            <v-icon>mdi-emoticon-excited</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Customer</v-list-item-title>
@@ -85,7 +90,7 @@
         </v-list-item>
         <v-list-item to="/menu-ukuran">
           <v-list-item-action>
-            <v-icon>mdi-paw</v-icon>
+            <v-icon>mdi-chart-line-variant</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Ukuran Hewan</v-list-item-title>
@@ -93,13 +98,41 @@
         </v-list-item>
         <v-list-item to="/menu-jenis">
           <v-list-item-action>
-            <v-icon>mdi-paw</v-icon>
+            <v-icon>mdi-pig</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Jenis Hewan</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+         <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title class="text-center font-weight-black">Transaksi</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item to="/menu-tpp" v-if="$user.role == 'Admin'">
+          <v-list-item-action >
+            <v-icon>mdi-cart</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Transaksi Produk</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+         <v-list-item to="/menu-tpl" v-if="$user.role == 'Admin'">
+          <v-list-item-action >
+            <v-icon>mdi-needle</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Transaksi Layanan</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
+      
+
+      <template v-slot:append class="grey lighten-5">
+        <div class="pa-2">
+          <v-btn @click="logout" class="grey darken-4" style="color: white;" block>Logout</v-btn>
+        </div>
+      </template>
     </v-navigation-drawer>
 
     <v-app-bar
@@ -133,5 +166,15 @@ export default {
       drawer: null,
     }
   },
+  methods: {
+    logout() {
+      confirm('Are you sure you want to logout ?')&&this.clearCookies()
+    },
+    clearCookies() {
+      this.$cookies.remove(this.$isLogin.value)
+      this.$cookies.remove(this.$user)
+      this.$router.push("/menu/login")
+    }
+  }
 }
 </script>

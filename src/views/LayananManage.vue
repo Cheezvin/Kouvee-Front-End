@@ -5,6 +5,7 @@
     :search="search"
     class="elevation-12 mx-12 mt-12 mb-12 pb-2 pt-2 subtitle-2"
     dense
+    disable-pagination
     hide-default-footer
   >
     <template v-slot:top>
@@ -93,8 +94,8 @@
     <template v-slot:item.gambar="{item}">
       <v-img class="text-center ml-12" height="150" width="130" :src="item.gambar"></v-img>
     </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">Reset</v-btn>
+    <template v-slot:item.id="{item}">
+      {{services.map(function(x) {return x.id; }).indexOf(item.id)+1}}
     </template>
   </v-data-table>
 </template>
@@ -109,7 +110,7 @@ export default {
     loading: false,
     headers: [
       {
-        text: 'ID',
+        text: 'No.',
         align: 'start',
         sortable: false,
         value: 'id',
@@ -171,6 +172,7 @@ export default {
     },
 
     initialize () {
+      this.$user.role = this.$cookies.get(this.$user).role
       axios.get("http://luxinoire.com/api/showLayanan").then(response => {
         this.services = response.data;
         this.index = response.data.length
@@ -217,6 +219,7 @@ export default {
           console.log(response.data)
         });
         if(this.selectedFile != null) {
+          this.loading = true
           this.uploadImg()
           var temp = this.editedItem["id"]
           var self = this
@@ -232,6 +235,7 @@ export default {
                   self.services = self.initialize()
                 })
             })
+            self.loading = false
           }, 10000);
         }
       } else {

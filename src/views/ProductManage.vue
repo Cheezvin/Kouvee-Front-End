@@ -5,6 +5,7 @@
     :search="search"
     class="elevation-12 mx-12 mt-12 mb-12 pb-2 pt-2 subtitle-2"
     dense
+    disable-pagination
     hide-default-footer
   >
     
@@ -97,8 +98,8 @@
     <template v-slot:item.gambar="{item}">
       <v-img class="text-center ml-12" height="150" width="130" :src="item.gambar"></v-img>
     </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">Reset</v-btn>
+    <template v-slot:item.id="{item}">
+      {{products.map(function(x) {return x.id; }).indexOf(item.id)+1}}
     </template>
   </v-data-table>
 </template>
@@ -113,7 +114,7 @@ export default {
     search: '',
     headers: [
       {
-        text: 'ID',
+        text: 'No.',
         align: 'start',
         sortable: false,
         value: 'id',
@@ -179,6 +180,7 @@ export default {
     },
 
     initialize () {
+      this.$user.role = this.$cookies.get(this.$user).role
       axios.get("http://luxinoire.com/api/showProduk").then(response => {
         this.products = response.data;
         this.index = response.data.length
@@ -186,6 +188,7 @@ export default {
       });
       this.$adminDrawer.value = true
       console.log(this.$adminDrawer.value)
+      
     },
 
     editItem (item) {
@@ -238,7 +241,7 @@ export default {
           this.uploadImg()
           var temp = this.editedItem["id"]
           var self = this
-          this.loadings()
+          this.loading = true
           setTimeout(function() {
             self.tes = self.fb.storage().ref("produk").child(self.selectedFile.name).
             getDownloadURL().then(function(url){
@@ -251,6 +254,7 @@ export default {
                   self.products = self.initialize()
                 })
             })
+             self.loading = false
           }, 10000);
         }
       } else {

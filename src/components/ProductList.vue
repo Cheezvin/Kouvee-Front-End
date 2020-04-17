@@ -5,6 +5,7 @@
       :search="search"
       :sort-by="sortBy.toLowerCase()"
       :sort-desc="sortDesc"
+      disable-pagination
        hide-default-footer>
       
        <template v-slot:header>

@@ -5,6 +5,7 @@
     :search="search"
     class="elevation-12 mx-12 mt-12 mb-12 pb-2 pt-2 subtitle-2"
     dense
+    disable-pagination
     hide-default-footer
   >
     <template v-slot:top>
@@ -101,8 +102,8 @@
     <template v-slot:item.logs="{item}">
       {{item.logAksi}} by {{item.logAktor}} on {{item.logWaktu}}
     </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">Reset</v-btn>
+    <template v-slot:item.id="{item}">
+      {{hewan.map(function(x) {return x.id; }).indexOf(item.id)+1}}
     </template>
   </v-data-table>
 </template>
@@ -118,7 +119,7 @@ export default {
     nc: [],
     headers: [
       {
-        text: 'ID',
+        text: 'No.',
         align: 'start',
         sortable: false,
         value: 'id',
@@ -181,7 +182,9 @@ export default {
 
   methods: {
     initialize () {
+      this.$user.role = this.$cookies.get(this.$user).role
       axios.get("http://luxinoire.com/api/showHewan").then(response => {
+        this.hewan = []
         this.temp = response.data
         for(var i in response.data) {
             if(this.temp[i].logAksi != "Deleted") {
@@ -246,6 +249,7 @@ export default {
         .then(response => {
           console.log(response.data)
         });
+        this.reloadData()
       } else {
           axios
           .post("http://luxinoire.com/api/createHewan", {
@@ -260,10 +264,16 @@ export default {
           .then(response => {
             console.log(response.data)
           });
-          this.hewan.push(this.editedItem)
+          this.reloadData()
         }
       this.close()
     },
+    reloadData() {
+      var self = this
+      setTimeout(function() {
+        self.initialize()
+      }, 1000);
+    }
   },
 }
 </script>

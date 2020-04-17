@@ -77,8 +77,8 @@
         mdi-delete
       </v-icon>
     </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">Reset</v-btn>
+    <template v-slot:item.id="{item}">
+      {{supplier.map(function(x) {return x.id; }).indexOf(item.id)+1}}
     </template>
   </v-data-table>
 </template>
@@ -92,7 +92,7 @@ export default {
     search: '',
     headers: [
       {
-        text: 'ID',
+        text: 'No.',
         align: 'start',
         sortable: false,
         value: 'id',
@@ -146,6 +146,7 @@ export default {
 
   methods: {
     initialize () {
+      this.$user.role = this.$cookies.get(this.$user).role
       axios.get("http://luxinoire.com/api/showSupplier").then(response => {
         this.supplier = response.data;
         this.index = response.data.length
@@ -195,7 +196,6 @@ export default {
         });
       } 
       else {
-        this.supplier.push(this.editedItem)
         axios.post("http://luxinoire.com/api/createSupplier", {
                 nama: this.editedItem["nama"],
                 alamat: this.editedItem["alamat"],
@@ -208,9 +208,16 @@ export default {
           .catch(error => {
             console.log(error)  
           })
+          this.reloadData()
       }
       this.close()
     },
+    reloadData() {
+      var self = this
+      setTimeout(function() {
+        self.initialize()
+      }, 1000);
+    }
   },
 }
 </script>

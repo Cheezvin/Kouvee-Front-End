@@ -144,8 +144,8 @@
         mdi-delete
       </v-icon>
     </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">Reset</v-btn>
+    <template v-slot:item.id="{item}">
+      {{pegawai.map(function(x) {return x.id; }).indexOf(item.id)+1}}
     </template>
   </v-data-table>
 </template>
@@ -162,7 +162,7 @@ export default {
     search: '',
     headers: [
       {
-        text: 'ID',
+        text: 'No.',
         align: 'start',
         value: 'id',
         filterable: false 
@@ -225,6 +225,7 @@ export default {
 
   methods: {
     initialize () {
+      this.$user.role = this.$cookies.get(this.$user).role
       axios.get("http://luxinoire.com/api/showPegawai").then(response => {
         this.pegawai = response.data;
         this.index = response.data.length
@@ -297,11 +298,18 @@ export default {
               .then(response => {
                 console.log(response.data)
               });
+              this.reloadData()
               this.close()
             }
         }
       }
     },
+    reloadData() {
+      var self = this
+      setTimeout(function() {
+        self.initialize()
+      }, 1000);
+    }
   },
 }
 </script>

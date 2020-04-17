@@ -1,7 +1,7 @@
 <template>
     <v-data-table
     :headers="headers"
-    :items="hewan"
+    :items="tpp"
     :search="search"
     class="elevation-12 mx-12 mt-12 mb-12 pb-2 pt-2 subtitle-2"
     dense
@@ -47,20 +47,20 @@ import axios from 'axios';
 export default {
     data() {
         return{
-            hewan: [],
+            tpp: [],
             search:'',
             headers: [
             {
-                text: 'ID',
+                text: 'No.',
                 align: 'start',
-                sortable: false,
                 value: 'id',
                 filterable: false 
             },
-            { text: 'Nama Hewan', value: 'nama', },
-            { text: 'Tanggal Lahir', value: 'tglLahir', sortable: false, filterable: false  },
-            { text: 'Jenis Hewan', value: 'jenisHewan', filterable: false, sortable: false },
-            { text: 'Pemilik', value: 'customer', filterable: false },
+            { text: 'ID Transaksi', value: 'id_transaksi', },
+            { text: 'Nama Produk', value: 'nama_produk', },
+            { text: 'Harga', value: 'harga', },
+            { text: 'Jumlah', value: 'jumlah', sortable: false, filterable: false  },
+            { text: 'Subtotal', value: 'subtotal', sortable: false, filterable: false  },
             { text: 'Actions', value: 'actions', sortable: false, filterable: false  },
             { text: 'Log', value: 'logs', filterable: false, sortable: false },
             ],
@@ -68,11 +68,11 @@ export default {
     },
     created() {
         this.$user.role = this.$cookies.get(this.$user).role
-        axios.get("http://luxinoire.com/api/showHewan").then(response => {
+        axios.get("http://luxinoire.com/api/showTPP").then(response => {
         this.temp = response.data
         for(var i in response.data) {
             if(this.temp[i].logAksi == "Deleted") {
-                this.hewan.push(this.temp[i])
+                this.tpp.push(this.temp[i])
             }
         }
       });
@@ -81,26 +81,69 @@ export default {
     },
     methods: {
         restore(item) {
-            const index = this.hewan.indexOf(item)
+            const index = this.tpp.indexOf(item)
             var temp = Object.assign({}, item)
             console.log(temp["id"])
-            confirm('Are you sure you want to restore this item?') && this.hewan.splice(index, 1)&&
+            confirm('Are you sure you want to restore this item?') && this.tpp.splice(index, 1)&&
             axios
-            .put("http://luxinoire.com/api/updateHewan/"+item["id"], {
+            .put("http://luxinoire.com/api/updateTPP/"+temp["id"], {
                 logAksi: 'Restored',
                 logAktor: this.$cookies.get(this.$user).nama,
                 logWaktu: new Date().toLocaleString()
             })
             .then(response => {
                 console.log(response.data)
-            });
+            })&&
+            this.hitungTotal(item.id_transaksi)
+            this.restock(item)
         },
+
+        restock(item) {
+          axios.get("http://luxinoire.com/api/searchProduk/"+item.id_produk).then(response => {
+              this.penampung = response.data.stok - item.jumlah
+              console.log(this.penampung)
+          });
+
+          var self = this
+          var id = item.id_produk
+          setTimeout(function() {
+            axios.put("http://luxinoire.com/api/updateProduk/"+id, {
+              stok: self.penampung
+            })
+          }, 1500);
+        }, 
+
+
+        hitungTotal(kode) {
+          var self = this
+          var id = kode
+          this.total = 0
+          setTimeout(function() {
+            axios.get("http://luxinoire.com/api/searchTPP/"+id).then(response => {
+              self.temp = response.data
+              for(var i in response.data) {
+                  if(self.temp[i].logAksi != "Deleted") {
+                      self.total = self.total + self.temp[i].subtotal
+                  }
+              }
+            });
+          }, 1500);
+          setTimeout(function() {
+            axios.put("http://luxinoire.com/api/updateTransaksiPembayaran/"+id, {
+              total_harga: self.total
+            })
+            .then(response => {
+              console.log(response.data)
+            });
+          }, 2500);
+        },
+
         deleteItem(item) {
-          const index = this.hewan.indexOf(item)
+          const index = this.tpp.indexOf(item)
           var temp = Object.assign({}, item)
           console.log(temp["id"])
-          confirm('Are you sure you want to delete this item?') && this.hewan.splice(index, 1) &&
-          axios.delete("http://luxinoire.com/api/deleteHewan/"+ temp["id"])
+          confirm('Are you sure you want to delete this item?') && this.tpp.splice(index, 1) &&
+          axios.delete("http://luxinoire.com/api/deleteTPP/"+ temp["id"])
           .then(response => {
             console.log(response)
           });

@@ -5,6 +5,7 @@
     :search="search"
     class="elevation-12 mx-12 mt-12 mb-12 pb-2 pt-2 subtitle-2"
     dense
+    disable-pagination
     hide-default-footer
   >
     <template v-slot:top>
@@ -75,8 +76,8 @@
     <template v-slot:item.logs="{item}">
       {{item.logAksi}} by {{item.logAktor}} on {{item.logWaktu}}
     </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">Reset</v-btn>
+    <template v-slot:item.id="{item}">
+      {{ukuran.map(function(x) {return x.id; }).indexOf(item.id)+1}}
     </template>
   </v-data-table>
 </template>
@@ -90,7 +91,7 @@ export default {
     search: '',
     headers: [
       {
-        text: 'ID',
+        text: 'No.',
         align: 'start',
         sortable: false,
         value: 'id',
@@ -144,7 +145,9 @@ export default {
 
   methods: {
     initialize () {
+      this.$user.role = this.$cookies.get(this.$user).role
       axios.get("http://luxinoire.com/api/showUkuranHewan").then(response => {
+        this.ukuran = []
         this.temp = response.data
         this.index = response.data.length
         for(var i in response.data) {
@@ -155,6 +158,7 @@ export default {
       });
       this.$adminDrawer.value = true
       console.log(this.$adminDrawer.value)
+      console.log(this.$user.role)
     },
 
     editItem (item) {
@@ -200,6 +204,7 @@ export default {
         .then(response => {
           console.log(response.data)
         });
+        this.reloadData()
       } else {
           axios
           .post("http://luxinoire.com/api/createUkuranHewan", {
@@ -211,10 +216,16 @@ export default {
           .then(response => {
             console.log(response.data)
           });
-          this.ukuran.push(this.editedItem)
+          this.reloadData()
         }
       this.close()
     },
+    reloadData() {
+      var self = this
+      setTimeout(function() {
+        self.initialize()
+      }, 1000);
+    }
   },
 }
 </script>

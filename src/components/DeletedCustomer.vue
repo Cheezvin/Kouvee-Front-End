@@ -68,7 +68,8 @@ export default {
         }
     },
     created() {
-         axios.get("http://luxinoire.com/api/showCustomer").then(response => {
+        this.$user.role = this.$cookies.get(this.$user).role
+        axios.get("http://luxinoire.com/api/showCustomer").then(response => {
         this.temp = response.data
         for(var i in response.data) {
             if(this.temp[i].logAksi == "Deleted") {
@@ -87,7 +88,9 @@ export default {
             confirm('Are you sure you want to restore this item?') && this.customer.splice(index, 1)&&
             axios
             .put("http://luxinoire.com/api/updateCustomer/"+item["id"], {
-                logAksi: 'Restored'
+                logAksi: 'Restored',
+                logAktor: this.$cookies.get(this.$user).nama,
+                logWaktu: new Date().toLocaleString()
             })
             .then(response => {
                 console.log(response.data)
