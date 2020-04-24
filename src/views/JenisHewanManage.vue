@@ -20,7 +20,7 @@
         <v-text-field
           class="pr-12"
           v-model="search"
-          label="Search"
+          label="Cari"
           single-line
           hide-details
         ></v-text-field>
@@ -74,7 +74,7 @@
       </v-icon>
     </template>
     <template v-slot:item.logs="{item}">
-      {{item.logAksi}} by {{item.logAktor}} on {{item.logWaktu}}
+      {{item.logAksi}} Oleh {{item.logAktor}} Pada {{item.logWaktu}}
     </template>
     <template v-slot:item.id="{item}">
       {{jenis.map(function(x) {return x.id; }).indexOf(item.id)+1}}
@@ -98,7 +98,7 @@ export default {
         filterable: false 
       },
       { text: 'Jenis Hewan', value: 'nama', },
-      { text: 'Actions', value: 'actions', sortable: false, filterable: false  },
+      { text: 'Aksi', value: 'actions', sortable: false, filterable: false  },
       { text: 'Log', value: 'logs', filterable: false, sortable: false },
     ],
     jenis: [],
@@ -170,10 +170,10 @@ export default {
       const index = this.jenis.indexOf(item)
       var temp = Object.assign({}, item)
       console.log(temp["id"])
-      confirm('Are you sure you want to delete this item?') && this.jenis.splice(index, 1) &&
+      confirm('Hapus Item?') && this.jenis.splice(index, 1) &&
       axios
         .put("http://luxinoire.com/api/updateJenisHewan/"+temp["id"], {
-          logAksi: "Deleted" ,
+          logAksi: "Dihapus" ,
           logAktor: this.$cookies.get(this.$user).nama,
           logWaktu: new Date().toLocaleString()
         })
@@ -196,7 +196,7 @@ export default {
         axios
         .put("http://luxinoire.com/api/updateJenisHewan/"+this.editedItem["id"], {
           nama: this.editedItem["nama"],
-          logAksi: "Edited",
+          logAksi: "Diubah",
           logAktor: this.$cookies.get(this.$user).nama,
           logWaktu: new Date().toLocaleString()
         })
@@ -208,7 +208,7 @@ export default {
           axios
           .post("http://luxinoire.com/api/createJenisHewan", {
                 nama: this.editedItem["nama"],
-                logAksi: "Added",
+                logAksi: "Ditambahkan",
                 logAktor: this.$cookies.get(this.$user).nama,
                 logWaktu: new Date().toLocaleString()
           })

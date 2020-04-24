@@ -19,13 +19,16 @@
         <v-text-field
           class="pr-12"
           v-model="search"
-          label="Search"
+          label="Cari"
           single-line
           hide-details
         ></v-text-field>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on }">
-             <v-btn class="mr-12" fab dark color="indigo" v-on="on">
+             <v-btn  fab dark color="red" v-on="on" to="/menu/deleted-supplier">
+              <v-icon dark>mdi-delete</v-icon>
+            </v-btn>
+             <v-btn class="mr-3" fab dark color="indigo" v-on="on">
               <v-icon dark>mdi-plus</v-icon>
             </v-btn>
           </template>
@@ -80,6 +83,9 @@
     <template v-slot:item.id="{item}">
       {{supplier.map(function(x) {return x.id; }).indexOf(item.id)+1}}
     </template>
+    <template v-slot:item.logs="{item}">
+      {{item.logAksi}} Oleh {{item.logAktor}} Pada {{item.logWaktu}}
+    </template>
   </v-data-table>
 </template>
 
@@ -98,11 +104,12 @@ export default {
         value: 'id',
         filterable: false 
       },
-      { text: 'Nama Supplierr', value: 'nama', },
+      { text: 'Nama Supplier', value: 'nama', },
       { text: 'Alamat', value: 'alamat', sortable: false, filterable: false  },
       { text: 'No.Telepon', value: 'noTelp', sortable: false, filterable: false  },
       { text: 'Kota', value: 'kota', filterable: false },
-      { text: 'Actions', value: 'actions', sortable: false, filterable: false  },
+      { text: 'Aksi', value: 'actions', sortable: false, filterable: false  },
+      { text: 'Log', value: 'logs', filterable: false, sortable: false },
     ],
     supplier: [],
     tes: '',
@@ -113,12 +120,18 @@ export default {
       alamat: '',
       noTelp: '',
       kota: '',
+      logAksi: '',
+      logAktor: '',
+      logWaktu: ''
     },
     defaultItem: {
       nama: '',
       alamat: '',
       noTelp: '',
       kota: '',
+      logAksi: '',
+      logAktor: '',
+      logWaktu: ''
     },
   }),
 
@@ -166,11 +179,16 @@ export default {
       const index = this.supplier.indexOf(item)
       var temp = Object.assign({}, item)
       console.log(temp["id"])
-      confirm('Are you sure you want to delete this item?') && this.supplier.splice(index, 1) &&
-      axios.delete("http://luxinoire.com/api/deleteSupplier/"+ temp["id"])
-      .then(response => {
-        console.log(response)
-      });
+      confirm('Hapus Item?') && this.supplier.splice(index, 1) &&
+      axios
+        .put("http://luxinoire.com/api/updateSupplier/"+temp["id"], {
+          logAksi: "Dihapus",
+          logAktor: this.$cookies.get(this.$user).nama,
+          logWaktu: new Date().toLocaleString()
+        })
+        .then(response => {
+          console.log(response.data)
+        });
     },
 
     close () {
@@ -190,10 +208,14 @@ export default {
           alamat: this.editedItem["alamat"],
           noTelp: this.editedItem["noTelp"],
           kota: this.editedItem["kota"],
+          logAksi: "Edited",
+          logAktor: this.$cookies.get(this.$user).nama,
+          logWaktu: new Date().toLocaleString()
         })
         .then(response => {
           console.log(response.data)
         });
+        this.reloadData()
       } 
       else {
         axios.post("http://luxinoire.com/api/createSupplier", {
@@ -201,6 +223,9 @@ export default {
                 alamat: this.editedItem["alamat"],
                 noTelp: this.editedItem["noTelp"],
                 kota: this.editedItem["kota"],
+                logAksi: "Added",
+                logAktor: this.$cookies.get(this.$user).nama,
+                logWaktu: new Date().toLocaleString()
           })
           .then(response => {
             console.log(response.data)

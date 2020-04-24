@@ -26,7 +26,7 @@
         <v-text-field
           class="pr-12"
           v-model="search"
-          label="Search"
+          label="Cari"
           single-line
           hide-details
         ></v-text-field>
@@ -91,7 +91,7 @@
         <v-dialog v-model="buat" max-width="500px">
           <v-card>
             <v-card-title>
-              <span class="headline">Create Transaction</span>
+              <span class="headline">Buat Transaksi</span>
             </v-card-title>
             <v-card-text>
               <v-container>
@@ -138,15 +138,15 @@
       </v-icon>
     </template>
     <template v-slot:item.logs="{item}">
-      {{item.logAksi}} by {{item.logAktor}} on {{item.logWaktu}}
+      {{item.logAksi}} Oleh {{item.logAktor}} Pada {{item.logWaktu}}
     </template>
     <template v-slot:item.id="{item}">
       {{tpl.map(function(x) {return x.id; }).indexOf(item.id)+1}}
     </template>
     <template v-slot:no-data>
-      Empty Transaction, Please Add Customer First 
+      Transaksi Kosong, Mohon Tambahkan Customer Dahulu
       <v-spacer/>
-      <v-btn color="primary" v-show="!ada" @click="buat=true">Add Customer</v-btn>
+      <v-btn color="primary" v-show="!ada" @click="buat=true">Tambah Customer</v-btn>
     </template>
     <template v-slot:footer>
        <v-toolbar flat color="white" class="mt-8 mb-2 ml-12">
@@ -158,7 +158,7 @@
         ></v-divider>
         <v-toolbar-title>{{total}}</v-toolbar-title>
         <v-spacer/>
-        <v-btn color="primary" class="px-10 mr-12 py-5" @click="buka">Create Transaction</v-btn>
+        <v-btn color="primary" class="px-10 mr-12 py-5" @click="buka">Buat Transaksi</v-btn>
        </v-toolbar>
     </template>
   </v-data-table>
@@ -187,7 +187,7 @@ export default {
       { text: 'Ukuran', value: 'ukuranHewan', },
       { text: 'Harga', value: 'harga', sortable: false, filterable: false  },
       { text: 'Subtotal', value: 'subtotal', sortable: false, filterable: false  },
-      { text: 'Actions', value: 'actions', sortable: false, filterable: false  },
+      { text: 'Aksi', value: 'actions', sortable: false, filterable: false  },
       { text: 'Log', value: 'logs', filterable: false, sortable: false },
     ],
     tpl: [],
@@ -211,7 +211,6 @@ export default {
       jenisHewan: '',
       harga: '',
       subtotal: '',
-      nama_customer: '',
       logAksi: '',
       logAktor: '',
       logWaktu: ''
@@ -224,7 +223,6 @@ export default {
       jenisHewan: '',
       harga: '',
       subtotal: '',
-      nama_customer: '',
       logAksi: '',
       logAktor: '',
       logWaktu: ''
@@ -258,8 +256,9 @@ export default {
 
   methods: {
     initialize () {
+      this.ada = false
       let current_datetime = new Date()
-      let formatted_date = (current_datetime.getFullYear()-2000) + this.appendLeadingZeroes(current_datetime.getMonth() + 1).toLocaleString() + this.appendLeadingZeroes(current_datetime.getDate())
+      let formatted_date = this.appendLeadingZeroes(current_datetime.getDate()) + this.appendLeadingZeroes(current_datetime.getMonth() + 1).toLocaleString() + (current_datetime.getFullYear()-2000)
       this.kode = "LY-"+formatted_date+"-"+ this.appendLeadingZeroes(this.$cookies.get(this.$incrementL.value))
       console.log(this.kode)
       this.$user.role = this.$cookies.get(this.$user).role
@@ -269,19 +268,24 @@ export default {
         this.index = response.data.length
         this.total = 0
         for(var i in response.data) {
-            if(this.temp[i].logAksi != "Deleted") {
+            if(this.temp[i].logAksi != "Dihapus") {
                 this.tpl.push(this.temp[i])
                 this.total = this.total + this.temp[i].subtotal
-                console.log(this.custData)
             }
-        }
-        if(this.total != 0) {
-          this.ada = true
         }
       });
 
+      axios.get("http://luxinoire.com/api/searchTransaksiPembayaran/"+this.kode).then(response => {
+          console.log(response.data.nama_customer)
+          if(response.data.nama_customer != null) {
+            this.custData.nama = response.data.nama_customer
+            this.reloadHewan(response.data.nama_customer)
+            this.ada = true
+          }
+      });
+
       this.reloadLayanan()
-      this.reloadHewan(this.custData.nama)
+      
 
       axios.get("http://luxinoire.com/api/showCustomer").then(response => {
           this.temp = response.data
@@ -304,7 +308,7 @@ export default {
         alert("No Transaction !")
       }
       else {
-        confirm('Are you sure you want to create this transaction ?')&&
+        confirm('Buat Transaksi?')&&
         this.createTrans()&&
         this.reloadData()
       }
@@ -315,7 +319,7 @@ export default {
         axios
           .put("http://luxinoire.com/api/updateTransaksiPembayaran/"+this.kode, {
                 total_harga: this.total,
-                logAksi: "Added",
+                logAksi: "Ditambahkan",
                 logWaktu: new Date().toLocaleString()
           })
           .then(response => {
@@ -323,6 +327,7 @@ export default {
           });
           this.$cookies.set(this.$incrementL.value, parseInt(this.$cookies.get(this.$incrementL.value))+1)
           this.buat = false
+          this.custData= []
           this.reloadData()
     },
 
@@ -336,7 +341,7 @@ export default {
       axios.get("http://luxinoire.com/api/showHewan").then(response => {
         this.temp = response.data
         for(var i in response.data) {
-          if(this.temp[i].logAksi != "Deleted" && this.temp[i].customer == this.custData.nama) {
+          if(this.temp[i].logAksi != "Dihapus" && this.temp[i].customer == this.custData.nama) {
               this.hewan.push(this.temp[i])
           }
         }
@@ -380,9 +385,10 @@ export default {
                 nama_customer: this.custData.nama,
                 telp_customer: this.custData.noTelp,
                 total_harga: 0,
+                diskon: 0,
                 status: "Belum Lunas",
                 tanggal: new Date().toLocaleString(),
-                logAksi: "Deleted",
+                logAksi: "Dihapus",
                 logAktor: this.$cookies.get(this.$user).nama,
                 logWaktu: "default"
           })
@@ -401,15 +407,14 @@ export default {
     deleteItem (item) {
       const index = this.tpl.indexOf(item)
       var temp = Object.assign({}, item)
-      confirm('Are you sure you want to delete this item?') && this.tpl.splice(index, 1) &&
+      confirm('Hapus Item?') && this.tpl.splice(index, 1) &&
       axios
         .put("http://luxinoire.com/api/updateTPL/"+temp["id"], {
-          logAksi: "Deleted" ,
+          logAksi: "Dihapus" ,
         })
         .then(response => {
           console.log(response.data)
         })&&
-        this.restock(item)
         this.reloadData()
     },
 
@@ -435,7 +440,7 @@ export default {
                   nama_hewan:  this.editedItem["nama_hewan"],
                   ukuranHewan: this.editedItem["ukuranHewan"],
                   jenisHewan:  this.editedItem["jenisHewan"],
-                  logAksi: "Edited",
+                  logAksi: "Diubah",
                   logAktor: this.$cookies.get(this.$user).nama,
                   logWaktu: new Date().toLocaleString()
           })
@@ -453,8 +458,7 @@ export default {
                   nama_hewan:  this.editedItem["nama_hewan"],
                   ukuranHewan: this.editedItem["ukuranHewan"],
                   jenisHewan:  this.editedItem["jenisHewan"],
-                  nama_customer: this.custData.nama,
-                  logAksi: "Added",
+                  logAksi: "Ditambahkan",
                   logAktor: this.$cookies.get(this.$user).nama,
                   logWaktu: new Date().toLocaleString()
             })

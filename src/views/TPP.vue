@@ -20,7 +20,7 @@
         <v-text-field
           class="pr-12"
           v-model="search"
-          label="Search"
+          label="Cari"
           single-line
           hide-details
         ></v-text-field>
@@ -75,7 +75,7 @@
         <v-dialog v-model="buat" max-width="500px">
           <v-card>
             <v-card-title>
-              <span class="headline">Create Transaction</span>
+              <span class="headline">Buat Transaksi</span>
             </v-card-title>
             <v-card-text>
               <v-container>
@@ -121,7 +121,7 @@
       </v-icon>
     </template>
     <template v-slot:item.logs="{item}">
-      {{item.logAksi}} by {{item.logAktor}} on {{item.logWaktu}}
+      {{item.logAksi}} Oleh {{item.logAktor}} Pada {{item.logWaktu}}
     </template>
     <template v-slot:item.id="{item}">
       {{tpp.map(function(x) {return x.id; }).indexOf(item.id)+1}}
@@ -136,7 +136,7 @@
         ></v-divider>
         <v-toolbar-title>{{total}}</v-toolbar-title>
         <v-spacer/>
-        <v-btn color="primary" class="px-10 mr-12 py-5" @click="buka">Create Transaction</v-btn>
+        <v-btn color="primary" class="px-10 mr-12 py-5" @click="buka">Buat Transaksi</v-btn>
        </v-toolbar>
     </template>
   </v-data-table>
@@ -163,7 +163,7 @@ export default {
       { text: 'Harga', value: 'harga', sortable: false, filterable: false  },
       { text: 'Jumlah', value: 'jumlah', sortable: false, filterable: false  },
       { text: 'Subtotal', value: 'subtotal', sortable: false, filterable: false  },
-      { text: 'Actions', value: 'actions', sortable: false, filterable: false  },
+      { text: 'Aksi', value: 'actions', sortable: false, filterable: false  },
       { text: 'Log', value: 'logs', filterable: false, sortable: false },
     ],
     tpp: [],
@@ -235,7 +235,7 @@ export default {
   methods: {
     initialize () {
       let current_datetime = new Date()
-      let formatted_date = (current_datetime.getFullYear()-2000) + this.appendLeadingZeroes(current_datetime.getMonth() + 1).toLocaleString() + this.appendLeadingZeroes(current_datetime.getDate())
+      let formatted_date = this.appendLeadingZeroes(current_datetime.getDate()) + this.appendLeadingZeroes(current_datetime.getMonth() + 1).toLocaleString() + (current_datetime.getFullYear()-2000)
       this.kode = "PR-"+formatted_date+"-"+ this.appendLeadingZeroes(this.$cookies.get(this.$incrementP.value))
       console.log(this.kode)
       this.$user.role = this.$cookies.get(this.$user).role
@@ -245,7 +245,7 @@ export default {
         this.index = response.data.length
         this.total = 0
         for(var i in response.data) {
-            if(this.temp[i].logAksi != "Deleted") {
+            if(this.temp[i].logAksi != "Dihapus") {
                 this.tpp.push(this.temp[i])
                 this.total = this.total + this.temp[i].subtotal
             }
@@ -276,9 +276,10 @@ export default {
                 nama_customer: this.custData.nama ,
                 telp_customer: this.custData.noTelp,
                 total_harga: this.total,
+                diskon: 0,
                 status: "Belum Lunas",
                 tanggal: new Date().toLocaleString(),
-                logAksi: "Added",
+                logAksi: "Ditambahkan",
                 logAktor: this.$cookies.get(this.$user).nama,
                 logWaktu: new Date().toLocaleString()
           })
@@ -363,10 +364,12 @@ export default {
     deleteItem (item) {
       const index = this.tpp.indexOf(item)
       var temp = Object.assign({}, item)
-      confirm('Are you sure you want to delete this item?') && this.tpp.splice(index, 1) &&
+      confirm('Hapus Item?') && this.tpp.splice(index, 1) &&
       axios
         .put("http://luxinoire.com/api/updateTPP/"+temp["id"], {
-          logAksi: "Deleted" ,
+          logAksi: "Dihapus" ,
+          logAktor: this.$cookies.get(this.$user).nama,
+          logWaktu: new Date().toLocaleString()
         })
         .then(response => {
           console.log(response.data)
@@ -419,7 +422,7 @@ export default {
                 harga: this.editedItem["harga"],
                 jumlah: this.editedItem["jumlah"],
                 subtotal: this.editedItem["jumlah"] * this.editedItem["harga"],
-                logAksi: "Edited",
+                logAksi: "Diubah",
                 logAktor: this.$cookies.get(this.$user).nama,
                 logWaktu: new Date().toLocaleString()
               })
@@ -441,7 +444,7 @@ export default {
                     harga: this.editedItem["harga"],
                     jumlah: this.editedItem["jumlah"],
                     subtotal: this.editedItem["jumlah"] * this.editedItem["harga"],
-                    logAksi: "Added",
+                    logAksi: "Ditambahkan",
                     logAktor: this.$cookies.get(this.$user).nama,
                     logWaktu: new Date().toLocaleString()
               })

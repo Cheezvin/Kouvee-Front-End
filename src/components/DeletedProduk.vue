@@ -1,7 +1,7 @@
 <template>
     <v-data-table
     :headers="headers"
-    :items="customer"
+    :items="produk"
     :search="search"
     class="elevation-12 mx-12 mt-12 mb-12 pb-2 pt-2 subtitle-2"
     dense
@@ -19,11 +19,14 @@
         ></v-text-field>
       </v-toolbar>
   </template>
+  <template v-slot:item.gambar="{item}">
+      <v-img class="text-center ml-12" height="150" width="130" :src="item.gambar"></v-img>
+    </template>
     <template v-slot:item.logs="{item}">
       {{item.logAksi}} Oleh {{item.logAktor}} Pada {{item.logWaktu}}
     </template>
     <template v-slot:item.id="{item}">
-      {{customer.map(function(x) {return x.id; }).indexOf(item.id)+1}}
+      {{produk.map(function(x) {return x.id; }).indexOf(item.id)+1}}
     </template>
     <template v-slot:item.actions="{ item }">
       <v-icon
@@ -50,42 +53,41 @@ import axios from 'axios';
 export default {
     data() {
         return{
-            customer: [],
+            produk: [],
             search:'',
             headers: [
-                {
-                    text: 'No.',
-                    align: 'start',
-                    sortable: false,
-                    value: 'id',
-                    filterable: false 
-                },
-                { text: 'Nama Customer', value: 'nama', },
-                { text: 'Alamat', value: 'alamat', sortable: false, filterable: false  },
-                { text: 'Tanggal Lahir', value: 'tglLahir', sortable: false, filterable: false  },
-                { text: 'No.Telepon', value: 'noTelp', filterable: false, sortable: false },
-                { text: 'Member', value: 'member', filterable: false },
-                { text: 'Aksi', value: 'actions', sortable: false, filterable: false  },
-                { text: 'Log', value: 'logs', filterable: false, sortable: false },
+            {
+                text: 'No.',
+                align: 'start',
+                sortable: false,
+                value: 'id',
+                filterable: false 
+            },
+            { text: '', value: 'gambar', sortable: false, filterable: false },
+            { text: 'Nama Produk', value: 'nama', },
+            { text: 'Harga', value: 'harga', filterable: false  },
+            { text: 'Stok', value: 'stok', filterable: false  },
+            { text: 'Aksi', value: 'actions', sortable: false, filterable: false  },
+            { text: 'Log', value: 'logs', filterable: false, sortable: false },
             ],
         }
     },
     created() {
         this.$user.role = this.$cookies.get(this.$user).role
-        axios.get("http://luxinoire.com/api/deletedCustomer").then(response => {
-        this.customer = response.data
+        axios.get("http://luxinoire.com/api/deletedProduk").then(response => {
+        this.produk = response.data
       });
       this.$adminDrawer.value = true
       console.log(this.$adminDrawer.value)
     },
     methods: {
         restore(item) {
-            const index = this.customer.indexOf(item)
+            const index = this.produk.indexOf(item)
             var temp = Object.assign({}, item)
             console.log(temp["id"])
-            confirm('Kembalikan Item?') && this.customer.splice(index, 1)&&
+            confirm('Kembalikan Item?') && this.produk.splice(index, 1)&&
             axios
-            .put("http://luxinoire.com/api/updateCustomer/"+item["id"], {
+            .put("http://luxinoire.com/api/updateProduk/"+item["id"], {
                 logAksi: 'Dikembalikan',
                 logAktor: this.$cookies.get(this.$user).nama,
                 logWaktu: new Date().toLocaleString()
@@ -95,11 +97,11 @@ export default {
             });
         },
         deleteItem(item) {
-          const index = this.customer.indexOf(item)
+          const index = this.produk.indexOf(item)
           var temp = Object.assign({}, item)
           console.log(temp["id"])
-          confirm('Hapus Permanen Item?') && this.customer.splice(index, 1) &&
-          axios.delete("http://luxinoire.com/api/deleteCustomer/"+ temp["id"])
+          confirm('Hapus Permanen Item?') && this.produk.splice(index, 1) &&
+          axios.delete("http://luxinoire.com/api/deleteProduk/"+ temp["id"])
           .then(response => {
             console.log(response)
           });

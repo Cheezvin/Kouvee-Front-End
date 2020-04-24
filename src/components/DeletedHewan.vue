@@ -13,14 +13,17 @@
         <v-text-field
           class="pr-12"
           v-model="search"
-          label="Search"
+          label="Cari"
           single-line
           hide-details
         ></v-text-field>
       </v-toolbar>
   </template>
     <template v-slot:item.logs="{item}">
-      {{item.logAksi}} by {{item.logAktor}} on {{item.logWaktu}}
+      {{item.logAksi}} Oleh {{item.logAktor}} Pada {{item.logWaktu}}
+    </template>
+    <template v-slot:item.id="{item}">
+      {{hewan.map(function(x) {return x.id; }).indexOf(item.id)+1}}
     </template>
     <template v-slot:item.actions="{ item }">
       <v-icon
@@ -51,7 +54,7 @@ export default {
             search:'',
             headers: [
             {
-                text: 'ID',
+                text: 'No.',
                 align: 'start',
                 sortable: false,
                 value: 'id',
@@ -61,20 +64,15 @@ export default {
             { text: 'Tanggal Lahir', value: 'tglLahir', sortable: false, filterable: false  },
             { text: 'Jenis Hewan', value: 'jenisHewan', filterable: false, sortable: false },
             { text: 'Pemilik', value: 'customer', filterable: false },
-            { text: 'Actions', value: 'actions', sortable: false, filterable: false  },
+            { text: 'Aksi', value: 'actions', sortable: false, filterable: false  },
             { text: 'Log', value: 'logs', filterable: false, sortable: false },
             ],
         }
     },
     created() {
         this.$user.role = this.$cookies.get(this.$user).role
-        axios.get("http://luxinoire.com/api/showHewan").then(response => {
-        this.temp = response.data
-        for(var i in response.data) {
-            if(this.temp[i].logAksi == "Deleted") {
-                this.hewan.push(this.temp[i])
-            }
-        }
+        axios.get("http://luxinoire.com/api/deletedHewan").then(response => {
+        this.hewan = response.data
       });
       this.$adminDrawer.value = true
       console.log(this.$adminDrawer.value)
@@ -84,10 +82,10 @@ export default {
             const index = this.hewan.indexOf(item)
             var temp = Object.assign({}, item)
             console.log(temp["id"])
-            confirm('Are you sure you want to restore this item?') && this.hewan.splice(index, 1)&&
+            confirm('Kembalikan item?') && this.hewan.splice(index, 1)&&
             axios
             .put("http://luxinoire.com/api/updateHewan/"+item["id"], {
-                logAksi: 'Restored',
+                logAksi: 'Dikembalikan',
                 logAktor: this.$cookies.get(this.$user).nama,
                 logWaktu: new Date().toLocaleString()
             })
@@ -99,7 +97,7 @@ export default {
           const index = this.hewan.indexOf(item)
           var temp = Object.assign({}, item)
           console.log(temp["id"])
-          confirm('Are you sure you want to delete this item?') && this.hewan.splice(index, 1) &&
+          confirm('Hapus Permanen Item?') && this.hewan.splice(index, 1) &&
           axios.delete("http://luxinoire.com/api/deleteHewan/"+ temp["id"])
           .then(response => {
             console.log(response)

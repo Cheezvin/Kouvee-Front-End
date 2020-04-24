@@ -20,7 +20,7 @@
         <v-text-field
           class="pr-12"
           v-model="search"
-          label="Search"
+          label="Cari"
           single-line
           hide-details
         ></v-text-field>
@@ -28,7 +28,10 @@
 
         <v-dialog v-model="dialog" max-width="1000" >
           <template v-slot:activator="{ on }">
-             <v-btn class="mr-12" fab dark color="indigo" v-on="on">
+             <v-btn  fab dark color="red" v-on="on" to="/menu/deleted-pegawai">
+              <v-icon dark>mdi-delete</v-icon>
+            </v-btn>
+             <v-btn class="mr-3" fab dark color="indigo" v-on="on">
               <v-icon dark>mdi-plus</v-icon>
             </v-btn>
           </template>
@@ -147,6 +150,9 @@
     <template v-slot:item.id="{item}">
       {{pegawai.map(function(x) {return x.id; }).indexOf(item.id)+1}}
     </template>
+    <template v-slot:item.logs="{item}">
+      {{item.logAksi}} Oleh {{item.logAktor}} Pada {{item.logWaktu}}
+    </template>
   </v-data-table>
 </template>
 
@@ -172,7 +178,8 @@ export default {
       { text: 'Tanggal Lahir', value: 'tglLahir', filterable: false, sortable: false},
       { text: 'No. Telepon', value: 'noTelp', sortable: false, filterable: false},
       { text: 'Role', value: 'role'},
-      { text: 'Action', value: 'actions', sortable: false, filterable: false  },
+      { text: 'Aksi', value: 'actions', sortable: false, filterable: false  },
+      { text: 'Log', value: 'logs', filterable: false, sortable: false },
     ],
     pegawai: [],
     tes: '',
@@ -189,7 +196,10 @@ export default {
       tglLahir: new Date().toISOString().substr(0, 10),
       noTelp: '',
       role: '',
-      password: ''
+      password: '',
+      logAksi: '',
+      logAktor: '',
+      logWaktu: ''
     },
     defaultItem: {
       nama: '',
@@ -197,7 +207,10 @@ export default {
       tglLahir: new Date().toISOString().substr(0, 10),
       noTelp: '',
       role: '',
-      password: ''
+      password: '',
+      logAksi: '',
+      logAktor: '',
+      logWaktu: ''
     },
   }),
 
@@ -245,11 +258,18 @@ export default {
       const index = this.pegawai.indexOf(item)
       var temp = Object.assign({}, item)
       console.log(temp["id"])
-      confirm('Are you sure you want to delete this item?') && this.pegawai.splice(index, 1) &&
-      axios.delete("http://luxinoire.com/api/deletePegawai/"+ temp["id"])
-      .then(response => {
-        console.log(response)
-      });
+      confirm('Hapus Item?') && this.pegawai.splice(index, 1) &&
+       axios
+        .put("http://luxinoire.com/api/updatePegawai/"+temp["id"], {
+          nama: "Banned"+new Date().toLocaleString(),
+          role: "Banned"+new Date().toLocaleString(),
+          logAksi: "Dihapus",
+          logAktor: this.$cookies.get(this.$user).nama,
+          logWaktu: new Date().toLocaleString()
+        })
+        .then(response => {
+          console.log(response.data)
+        });
     },
 
     close () {
@@ -270,11 +290,15 @@ export default {
             alamat: this.editedItem["alamat"],
             tglLahir: this.editedItem["tglLahir"],
             noTelp: this.editedItem["noTelp"],
-            role: this.editedItem["role"]
+            role: this.editedItem["role"],
+            logAksi: "Diubah",
+            logAktor: this.$cookies.get(this.$user).nama,
+            logWaktu: new Date().toLocaleString()
           })
           .then(response => {
             console.log(response.data)
           });
+          this.reloadData()
           this.close()
       } else {
           if(this.editedItem["password"]!=this.confirm) {
@@ -293,7 +317,10 @@ export default {
                 tglLahir: this.editedItem["tglLahir"],
                 noTelp: this.editedItem["noTelp"],
                 role: this.editedItem["role"],
-                password: this.editedItem["password"]
+                password: this.editedItem["password"],
+                logAksi: "Ditambahkan",
+                logAktor: this.$cookies.get(this.$user).nama,
+                logWaktu: new Date().toLocaleString()
               })
               .then(response => {
                 console.log(response.data)

@@ -20,13 +20,16 @@
         <v-text-field
           class="pr-12"
           v-model="search"
-          label="Search"
+          label="Cari"
           single-line
           hide-details
         ></v-text-field>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on }">
-             <v-btn class="mr-12" fab dark color="indigo" v-on="on">
+             <v-btn  fab dark color="red" v-on="on" to="/menu/deleted-layanan">
+              <v-icon dark>mdi-delete</v-icon>
+            </v-btn>
+             <v-btn class="mr-3" fab dark color="indigo" v-on="on">
               <v-icon dark>mdi-plus</v-icon>
             </v-btn>
           </template>
@@ -60,7 +63,7 @@
           </v-card>
         </v-dialog>
 
-        <v-dialog v-model="loading" fullscreen full-width>
+        <v-dialog v-model="loading" fullscreen>
         <v-container fluid fill-height style="background-color: rgba(0, 0, 0, 0.8);">
          <v-layout justify-center align-center>
             <v-progress-circular
@@ -97,6 +100,9 @@
     <template v-slot:item.id="{item}">
       {{services.map(function(x) {return x.id; }).indexOf(item.id)+1}}
     </template>
+    <template v-slot:item.logs="{item}">
+      {{item.logAksi}} Oleh {{item.logAktor}} Pada {{item.logWaktu}}
+    </template>
   </v-data-table>
 </template>
 
@@ -119,7 +125,8 @@ export default {
       { text: '', value: 'gambar', sortable: false, filterable: false },
       { text: 'Nama Layanan', value: 'nama', },
       { text: 'Harga', value: 'harga', filterable: false  },
-      { text: 'Actions', value: 'actions', sortable: false, filterable: false  },
+      { text: 'Aksi', value: 'actions', sortable: false, filterable: false  },
+      { text: 'Log', value: 'logs', filterable: false, sortable: false },
     ],
     services: [],
     tes: '',
@@ -128,12 +135,18 @@ export default {
     editedItem: {
       nama: '',
       harga: 0,
-      gambar: ''
+      gambar: '',
+      logAksi: '',
+      logAktor: '',
+      logWaktu: ''
     },
     defaultItem: {
       nama: '',
       harga: 0,
-      gambar: ''
+      gambar: '',
+      logAksi: '',
+      logAktor: '',
+      logWaktu: ''
     },
   }),
 
@@ -192,11 +205,16 @@ export default {
       const index = this.services.indexOf(item)
       var temp = Object.assign({}, item)
       console.log(temp["id"])
-      confirm('Are you sure you want to delete this item?') && this.services.splice(index, 1) &&
-      axios.delete("http://luxinoire.com/api/deleteLayanan/"+ temp["id"])
-      .then(response => {
-        console.log(response)
-      });
+      confirm('Hapus Item?') && this.services.splice(index, 1) &&
+      axios
+        .put("http://luxinoire.com/api/updateLayanan/"+temp["id"], {
+          logAksi: "Dihapus",
+          logAktor: this.$cookies.get(this.$user).nama,
+          logWaktu: new Date().toLocaleString()
+        })
+        .then(response => {
+          console.log(response.data)
+        });
     },
 
     close () {
@@ -214,6 +232,9 @@ export default {
         .put("http://luxinoire.com/api/updateLayanan/"+this.editedItem["id"], {
           nama: this.editedItem["nama"],
           harga: this.editedItem["harga"],
+          logAksi: "Diubah",
+          logAktor: this.$cookies.get(this.$user).nama,
+          logWaktu: new Date().toLocaleString()
         })
         .then(response => {
           console.log(response.data)
@@ -245,7 +266,10 @@ export default {
           .post("http://luxinoire.com/api/createLayanan", {
             nama: this.editedItem["nama"],
             harga: this.editedItem["harga"],
-            gambar: "default"
+            gambar: "default",
+            logAksi: "Ditambahkan",
+            logAktor: this.$cookies.get(this.$user).nama,
+            logWaktu: new Date().toLocaleString()
           })
           .then(response => {
             console.log(response.data)

@@ -20,7 +20,7 @@
         <v-text-field
           class="pr-12"
           v-model="search"
-          label="Search"
+          label="Cari"
           single-line
           hide-details
         ></v-text-field>
@@ -95,7 +95,7 @@
       </v-icon>
     </template>
     <template v-slot:item.logs="{item}">
-      {{item.logAksi}} by {{item.logAktor}} on {{item.logWaktu}}
+      {{item.logAksi}} Oleh {{item.logAktor}} Pada {{item.logWaktu}}
     </template>
     <template v-slot:item.id="{item}">
       {{customer.map(function(x) {return x.id; }).indexOf(item.id)+1}}
@@ -127,7 +127,7 @@ export default {
       { text: 'Tanggal Lahir', value: 'tglLahir', sortable: false, filterable: false  },
       { text: 'No.Telepon', value: 'noTelp', filterable: false, sortable: false },
       { text: 'Member', value: 'member', filterable: false },
-      { text: 'Actions', value: 'actions', sortable: false, filterable: false  },
+      { text: 'Aksi', value: 'actions', sortable: false, filterable: false  },
       { text: 'Log', value: 'logs', filterable: false, sortable: false },
     ],
     customer: [],
@@ -207,10 +207,12 @@ export default {
       const index = this.customer.indexOf(item)
       var temp = Object.assign({}, item)
       console.log(temp["id"])
-      confirm('Are you sure you want to delete this item?') && this.customer.splice(index, 1) &&
+      confirm('Hapus Item ?') && this.customer.splice(index, 1) &&
       axios
         .put("http://luxinoire.com/api/updateCustomer/"+temp["id"], {
-          logAksi: "Deleted" ,
+          logAksi: "Dihapus" ,
+          logAktor: this.$cookies.get(this.$user).nama,
+          logWaktu: new Date().toLocaleString()
         })
         .then(response => {
           console.log(response.data)
@@ -235,7 +237,7 @@ export default {
           noTelp: this.editedItem["noTelp"],
           tglLahir: this.editedItem["tglLahir"],
           member: this.editedItem["member"],
-          logAksi: "Edited",
+          logAksi: "Diubah",
           logAktor: this.$cookies.get(this.$user).nama,
           logWaktu: new Date().toLocaleString()
         })
@@ -251,7 +253,7 @@ export default {
                 noTelp: this.editedItem["noTelp"],
                 tglLahir: this.editedItem["tglLahir"],
                 member: this.editedItem["member"],
-                logAksi: "Added",
+                logAksi: "Ditambahkan",
                 logAktor: this.$cookies.get(this.$user).nama,
                 logWaktu: new Date().toLocaleString()
           })

@@ -78,10 +78,13 @@ import axios from 'axios';
                 self.$cookies.set(self.$date.value, current_datetime.getDate(), "1d")
                 self.$cookies.set(self.$incrementP.value, 1, "1d")
                 self.$cookies.set(self.$incrementL.value, 1, "1d")
+                self.$cookies.set(self.$incrementPO.value, 1, "1d")
               }
-              self.$router.push("/menu")
             }
           },2000)
+           setTimeout(function() {
+            self.$router.push("/menu")
+          },2500) 
         }
       }
     },

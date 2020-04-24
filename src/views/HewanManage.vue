@@ -20,7 +20,7 @@
         <v-text-field
           class="pr-12"
           v-model="search"
-          label="Search"
+          label="Cari"
           single-line
           hide-details
         ></v-text-field>
@@ -54,6 +54,17 @@
                       hide-details
                       :items="jh"
                       label="Jenis Hewan"
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                     Ukuran Hewan :
+                    <v-select 
+                      v-model="editedItem.ukuranHewan"
+                      flat
+                      solo-inverted
+                      hide-details
+                      :items="uh"
+                      label="Ukuran Hewan"
                     ></v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
@@ -100,7 +111,7 @@
       </v-icon>
     </template>
     <template v-slot:item.logs="{item}">
-      {{item.logAksi}} by {{item.logAktor}} on {{item.logWaktu}}
+      {{item.logAksi}} Oleh {{item.logAktor}} Pada {{item.logWaktu}}
     </template>
     <template v-slot:item.id="{item}">
       {{hewan.map(function(x) {return x.id; }).indexOf(item.id)+1}}
@@ -117,6 +128,7 @@ export default {
     search: '',
     jh: [],
     nc: [],
+    uh: [],
     headers: [
       {
         text: 'No.',
@@ -128,8 +140,9 @@ export default {
       { text: 'Nama Hewan', value: 'nama', },
       { text: 'Tanggal Lahir', value: 'tglLahir', sortable: false, filterable: false  },
       { text: 'Jenis Hewan', value: 'jenisHewan', filterable: false, sortable: false },
+      { text: 'Ukuran Hewan', value: 'ukuranHewan', filterable: false, sortable: false },
       { text: 'Pemilik', value: 'customer', filterable: false },
-      { text: 'Actions', value: 'actions', sortable: false, filterable: false  },
+      { text: 'Aksi', value: 'actions', sortable: false, filterable: false  },
       { text: 'Log', value: 'logs', filterable: false, sortable: false },
     ],
     hewan: [],
@@ -141,6 +154,7 @@ export default {
     editedItem: {
       nama: '',
       jenisHewan: '',
+      ukuranHewan: '',
       customer: '',
       tglLahir: new Date().toISOString().substr(0, 10),
       logAksi: '',
@@ -150,6 +164,7 @@ export default {
     defaultItem: {
       nama: '',
       jenisHewan: '',
+      ukuranHewan: '',
       customer: '',
       tglLahir: new Date().toISOString().substr(0, 10),
       logAksi: '',
@@ -202,6 +217,11 @@ export default {
             this.nc.push(response.data[i].nama)
         }
       });
+      axios.get("http://luxinoire.com/api/showUkuranHewan").then(response => {
+        for(var i in response.data) {
+            this.uh.push(response.data[i].nama)
+        }
+      });
       this.$adminDrawer.value = true
     },
 
@@ -218,7 +238,7 @@ export default {
       confirm('Are you sure you want to delete this item?') && this.hewan.splice(index, 1) &&
       axios
         .put("http://luxinoire.com/api/updateHewan/"+temp["id"], {
-          logAksi: "Deleted" ,
+          logAksi: "Dihapus" ,
         })
         .then(response => {
           console.log(response.data)
@@ -240,9 +260,10 @@ export default {
         .put("http://luxinoire.com/api/updateHewan/"+this.editedItem["id"], {
           nama: this.editedItem["nama"],
           jenisHewan: this.editedItem["jenisHewan"],
+          ukuranHewan: this.editedItem["ukuranHewan"],
           customer: this.editedItem["customer"],
           tglLahir: this.editedItem["tglLahir"],
-          logAksi: "Edited",
+          logAksi: "Diubah",
           logAktor: this.$cookies.get(this.$user).nama,
           logWaktu: new Date().toLocaleString()
         })
@@ -255,9 +276,10 @@ export default {
           .post("http://luxinoire.com/api/createHewan", {
                 nama: this.editedItem["nama"],
                 jenisHewan: this.editedItem["jenisHewan"],
+                ukuranHewan: this.editedItem["ukuranHewan"],
                 customer: this.editedItem["customer"],
                 tglLahir: this.editedItem["tglLahir"],
-                logAksi: "Added",
+                logAksi: "Ditambahkan",
                 logAktor: this.$cookies.get(this.$user).nama,
                 logWaktu: new Date().toLocaleString()
           })

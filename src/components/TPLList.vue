@@ -20,7 +20,7 @@
         <v-text-field
           class="pr-12"
           v-model="search"
-          label="Search"
+          label="Cari"
           single-line
           hide-details
         ></v-text-field>
@@ -157,7 +157,7 @@
       </v-icon>
     </template>
     <template v-slot:item.logs="{item}">
-      {{item.logAksi}} by {{item.logAktor}} on {{item.logWaktu}}
+      {{item.logAksi}} Oleh {{item.logAktor}} Pada {{item.logWaktu}}
     </template>
     <template v-slot:item.id="{item}">
       {{tpl.map(function(x) {return x.id; }).indexOf(item.id)+1}}
@@ -188,7 +188,7 @@ export default {
       { text: 'Ukuran', value: 'ukuranHewan', },
       { text: 'Harga', value: 'harga', sortable: false, filterable: false  },
       { text: 'Subtotal', value: 'subtotal', sortable: false, filterable: false  },
-      { text: 'Actions', value: 'actions', sortable: false, filterable: false  },
+      { text: 'Aksi', value: 'actions', sortable: false, filterable: false  },
       { text: 'Log', value: 'logs', filterable: false, sortable: false },
     ],
     tpl: [],
@@ -211,7 +211,6 @@ export default {
       jenisHewan: '',
       harga: '',
       subtotal: '',
-      nama_customer: '',
       logAksi: '',
       logAktor: '',
       logWaktu: ''
@@ -224,7 +223,6 @@ export default {
       jenisHewan: '',
       harga: '',
       subtotal: '',
-      nama_customer: '',
       logAksi: '',
       logAktor: '',
       logWaktu: ''
@@ -258,6 +256,7 @@ export default {
 
   methods: {
     initialize () {
+      this.kode = ''
       this.$user.role = this.$cookies.get(this.$user).role
       axios.get("http://luxinoire.com/api/showTPL").then(response => {
         this.tpl = []
@@ -265,7 +264,7 @@ export default {
         this.index = response.data.length
         this.total = 0
         for(var i in response.data) {
-            if(this.temp[i].logAksi != "Deleted") {
+            if(this.temp[i].logAksi != "Dihapus") {
                 this.tpl.push(this.temp[i])
                 this.idTrans.push(this.temp[i].id_transaksi)
             }
@@ -286,16 +285,16 @@ export default {
     },
 
     getData() {
+        console.log(this.kode)
         axios.get("http://luxinoire.com/api/searchTransaksiPembayaran/"+this.kode).then(response => {
            this.namaCust = response.data.nama_customer
            console.log(this.namaCust)
            this.reloadHewan(this.namaCust) 
         });
-        
     },
 
     buka() {
-      confirm('Are you sure you want to create this transaction ?')&&
+      confirm('Buat Transaksi?')&&
       this.createTrans()&&
       this.reloadData()
     },
@@ -311,7 +310,7 @@ export default {
       axios.get("http://luxinoire.com/api/showHewan").then(response => {
         this.temp = response.data
         for(var i in response.data) {
-          if(this.temp[i].logAksi != "Deleted" && this.temp[i].customer == nama) {
+          if(this.temp[i].logAksi != "Dihapus" && this.temp[i].customer == nama) {
               this.hewan.push(this.temp[i])
           }
         }
@@ -333,12 +332,13 @@ export default {
     },
 
     editItem (item) {
-      this.reloadHewan(item.nama_customer)
       this.editedIndex = this.tpl.indexOf(item)
       this.editedItem = Object.assign({}, item)
-      this.selectedH.nama = item.nama_hewan
+      this.kode = item.id_transaksi
+      this.getData()
+      this.selectedH.nama = this.editedItem["nama_hewan"]
       this.selectedL.nama = this.editedItem["nama_layanan"]
-      this.buka= true
+      this.dialog= true
     },
 
     appendLeadingZeroes(n){
@@ -362,10 +362,12 @@ export default {
     deleteItem (item) {
       const index = this.tpl.indexOf(item)
       var temp = Object.assign({}, item)
-      confirm('Are you sure you want to delete this item?') && this.tpl.splice(index, 1) &&
+      confirm('Hapus Item?') && this.tpl.splice(index, 1) &&
       axios
         .put("http://luxinoire.com/api/updateTPL/"+temp["id"], {
-          logAksi: "Deleted" ,
+          logAksi: "Dihapus" ,
+          logAktor: this.$cookies.get(this.$user).nama,
+          logWaktu: new Date().toLocaleString()
         })
         .then(response => {
           console.log(response.data)
@@ -394,7 +396,7 @@ export default {
         axios.get("http://luxinoire.com/api/searchTPL/"+id).then(response => {
           self.temp = response.data
           for(var i in response.data) {
-              if(self.temp[i].logAksi != "Deleted") {
+              if(self.temp[i].logAksi != "Dihapus") {
                   self.total = self.total + self.temp[i].subtotal
               }
           }
@@ -421,7 +423,7 @@ export default {
                   nama_hewan:  this.editedItem["nama_hewan"],
                   ukuranHewan: this.editedItem["ukuranHewan"],
                   jenisHewan:  this.editedItem["jenisHewan"],
-                  logAksi: "Edited",
+                  logAksi: "Diubah",
                   logAktor: this.$cookies.get(this.$user).nama,
                   logWaktu: new Date().toLocaleString()
           })
@@ -439,8 +441,7 @@ export default {
                   nama_hewan:  this.editedItem["nama_hewan"],
                   ukuranHewan: this.editedItem["ukuranHewan"],
                   jenisHewan:  this.editedItem["jenisHewan"],
-                  nama_customer: this.namaCust,
-                  logAksi: "Added",
+                  logAksi: "Ditambahkan",
                   logAktor: this.$cookies.get(this.$user).nama,
                   logWaktu: new Date().toLocaleString()
             })

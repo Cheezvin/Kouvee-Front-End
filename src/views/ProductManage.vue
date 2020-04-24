@@ -21,13 +21,16 @@
         <v-text-field
           class="pr-12"
           v-model="search"
-          label="Search"
+          label="Cari"
           single-line
           hide-details
         ></v-text-field>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on }">
-             <v-btn class="mr-12" fab dark color="indigo" v-on="on">
+            <v-btn  fab dark color="red" v-on="on" to="/menu/deleted-produk">
+              <v-icon dark>mdi-delete</v-icon>
+            </v-btn>
+             <v-btn class="mr-3" fab dark color="indigo" v-on="on">
               <v-icon dark>mdi-plus</v-icon>
             </v-btn>
           </template>
@@ -47,6 +50,9 @@
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field v-model="editedItem.stok" label="Stok"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field v-model="editedItem.stok_min" label="Stok Minimum"></v-text-field>
                   </v-col>
                   <v-col cols="12">
                     Gambar : 
@@ -101,6 +107,9 @@
     <template v-slot:item.id="{item}">
       {{products.map(function(x) {return x.id; }).indexOf(item.id)+1}}
     </template>
+    <template v-slot:item.logs="{item}">
+      {{item.logAksi}} Oleh {{item.logAktor}} Pada {{item.logWaktu}}
+    </template>
   </v-data-table>
 </template>
 
@@ -124,7 +133,9 @@ export default {
       { text: 'Nama Produk', value: 'nama', },
       { text: 'Harga', value: 'harga', filterable: false  },
       { text: 'Stok', value: 'stok', filterable: false  },
-      { text: 'Actions', value: 'actions', sortable: false, filterable: false  },
+      { text: 'Stok Minimum', value: 'stok_min', filterable: false  },
+      { text: 'Aksi', value: 'actions', sortable: false, filterable: false  },
+      { text: 'Log', value: 'logs', filterable: false, sortable: false },
     ],
     products: [],
     tes: '',
@@ -135,13 +146,21 @@ export default {
       nama: '',
       harga: 0,
       stok: 0,
-      gambar: ''
+      gambar: '',
+      stok_min: '',
+      logAksi: '',
+      logAktor: '',
+      logWaktu: ''
     },
     defaultItem: {
       nama: '',
       harga: 0,
       stok: 0,
-      gambar: ''
+      gambar: '',
+      stok_min: '',
+      logAksi: '',
+      logAktor: '',
+      logWaktu: ''
     },
   }),
 
@@ -201,11 +220,16 @@ export default {
       const index = this.products.indexOf(item)
       var temp = Object.assign({}, item)
       console.log(temp["id"])
-      confirm('Are you sure you want to delete this item?') && this.products.splice(index, 1) &&
-      axios.delete("http://luxinoire.com/api/deleteProduk/"+ temp["id"])
-      .then(response => {
-        console.log(response)
-      });
+      confirm('Hapus Item?') && this.products.splice(index, 1) &&
+      axios
+        .put("http://luxinoire.com/api/updateProduk/"+temp["id"], {
+          logAksi: "Dihapus",
+          logAktor: this.$cookies.get(this.$user).nama,
+          logWaktu: new Date().toLocaleString()
+        })
+        .then(response => {
+          console.log(response.data)
+        });
     },
 
     close () {
@@ -232,7 +256,11 @@ export default {
         .put("http://luxinoire.com/api/updateProduk/"+this.editedItem["id"], {
           nama: this.editedItem["nama"],
           harga: this.editedItem["harga"],
-          stok: this.editedItem["stok"]
+          stok: this.editedItem["stok"],
+          stok_min: this.editedItem["stok_min"],
+          logAksi: "Diubah",
+          logAktor: this.$cookies.get(this.$user).nama,
+          logWaktu: new Date().toLocaleString()
         })
         .then(response => {
           console.log(response.data)
@@ -265,7 +293,11 @@ export default {
             nama: this.editedItem["nama"],
             harga: this.editedItem["harga"],
             stok: this.editedItem["stok"],
-            gambar: this.selectedFile.name
+            stok_min: this.editedItem["stok_min"],
+            gambar: this.selectedFile.name,
+            logAksi: "Ditambahkan",
+            logAktor: this.$cookies.get(this.$user).nama,
+            logWaktu: new Date().toLocaleString()
           })
           .then(response => {
             console.log(response.data)

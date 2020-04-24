@@ -36,13 +36,14 @@
     <v-navigation-drawer v-model="drawer" app>
       <v-list dense>
         <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title class="text-center font-weight-black">Main Data</v-list-item-title>
-          </v-list-item-content>
+            <v-list-item-title class="text-center font-weight-black">
+              <v-icon>mdi-human-male</v-icon>
+              Main Data
+            </v-list-item-title>
         </v-list-item>
         <v-list-item to="/menu-product" v-if="$user.role == 'Admin'">
           <v-list-item-action >
-            <v-icon>mdi-cart</v-icon>
+            <v-icon>mdi-chevron-right</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Produk</v-list-item-title>
@@ -50,7 +51,7 @@
         </v-list-item>
         <v-list-item to="/menu-layanan" v-if="$user.role == 'Admin'">
           <v-list-item-action>
-            <v-icon>mdi-needle</v-icon>
+            <v-icon>mdi-chevron-right</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Layanan</v-list-item-title>
@@ -58,7 +59,7 @@
         </v-list-item>
         <v-list-item to="/menu-pegawai" v-if="$user.role == 'Admin'">
           <v-list-item-action>
-            <v-icon>mdi-human-male</v-icon>
+            <v-icon>mdi-chevron-right</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Pegawai</v-list-item-title>
@@ -66,7 +67,7 @@
         </v-list-item>
         <v-list-item to="/menu-supplier" v-if="$user.role == 'Admin'">
           <v-list-item-action>
-            <v-icon>mdi-truck</v-icon>
+            <v-icon>mdi-chevron-right</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Supplier</v-list-item-title>
@@ -74,7 +75,7 @@
         </v-list-item>
         <v-list-item to="/menu-customer">
           <v-list-item-action>
-            <v-icon>mdi-emoticon-excited</v-icon>
+            <v-icon>mdi-chevron-right</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Customer</v-list-item-title>
@@ -82,7 +83,7 @@
         </v-list-item>
         <v-list-item to="/menu-hewan">
           <v-list-item-action>
-            <v-icon>mdi-paw</v-icon>
+            <v-icon>mdi-chevron-right</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Hewan</v-list-item-title>
@@ -90,7 +91,7 @@
         </v-list-item>
         <v-list-item to="/menu-ukuran">
           <v-list-item-action>
-            <v-icon>mdi-chart-line-variant</v-icon>
+            <v-icon>mdi-chevron-right</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Ukuran Hewan</v-list-item-title>
@@ -98,20 +99,21 @@
         </v-list-item>
         <v-list-item to="/menu-jenis">
           <v-list-item-action>
-            <v-icon>mdi-pig</v-icon>
+            <v-icon>mdi-chevron-right</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Jenis Hewan</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
          <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title class="text-center font-weight-black">Transaksi</v-list-item-title>
-          </v-list-item-content>
+            <v-list-item-title class="text-center font-weight-black">
+              <v-icon>mdi-cart</v-icon>
+              Transaksi
+            </v-list-item-title>
         </v-list-item>
         <v-list-item to="/menu-tpp" v-if="$user.role == 'Admin'">
           <v-list-item-action >
-            <v-icon>mdi-cart</v-icon>
+            <v-icon>mdi-chevron-right</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Transaksi Produk</v-list-item-title>
@@ -119,10 +121,26 @@
         </v-list-item>
          <v-list-item to="/menu-tpl" v-if="$user.role == 'Admin'">
           <v-list-item-action >
-            <v-icon>mdi-needle</v-icon>
+            <v-icon>mdi-chevron-right</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Transaksi Layanan</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item to="/menu-transaksi-pembayaran" v-if="$user.role == 'Admin'">
+          <v-list-item-action >
+            <v-icon>mdi-chevron-right</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Transaksi Pembayaran</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item to="/menu-transaksi-pemesanan" v-if="$user.role == 'Admin'">
+          <v-list-item-action >
+            <v-icon>mdi-chevron-right</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Transaksi Pemesanan</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>

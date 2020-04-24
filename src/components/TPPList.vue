@@ -20,7 +20,7 @@
         <v-text-field
           class="pr-12"
           v-model="search"
-          label="Search"
+          label="Cari"
           single-line
           hide-details
         ></v-text-field>
@@ -136,7 +136,7 @@
       </v-icon>
     </template>
     <template v-slot:item.logs="{item}">
-      {{item.logAksi}} by {{item.logAktor}} on {{item.logWaktu}}
+      {{item.logAksi}} Oleh {{item.logAktor}} Pada {{item.logWaktu}}
     </template>
     <template v-slot:item.id="{item}">
       {{tpp.map(function(x) {return x.id; }).indexOf(item.id)+1}}
@@ -240,7 +240,7 @@ export default {
         this.tpp = []
         this.temp = response.data
         for(var i in response.data) {
-          if(this.temp[i].logAksi != "Deleted") {
+          if(this.temp[i].logAksi != "Dihapus") {
               this.tpp.push(this.temp[i])
               this.idTrans.push(this.temp[i].id_transaksi)
           }
@@ -321,7 +321,7 @@ export default {
         axios.get("http://luxinoire.com/api/searchTPP/"+id).then(response => {
           self.temp = response.data
           for(var i in response.data) {
-              if(self.temp[i].logAksi != "Deleted") {
+              if(self.temp[i].logAksi != "Dihapus") {
                   self.total = self.total + self.temp[i].subtotal
               }
           }
@@ -340,10 +340,10 @@ export default {
     deleteItem (item) {
       const index = this.tpp.indexOf(item)
       var temp = Object.assign({}, item)
-      confirm('Are you sure you want to delete this item?') && this.tpp.splice(index, 1) &&
+      confirm('Hapus Item?') && this.tpp.splice(index, 1) &&
       axios
         .put("http://luxinoire.com/api/updateTPP/"+temp["id"], {
-          logAksi: "Deleted" ,
+          logAksi: "Dihapus" ,
         })
         .then(response => {
           console.log(response.data)
@@ -396,7 +396,7 @@ export default {
                 harga: this.editedItem["harga"],
                 jumlah: this.editedItem["jumlah"],
                 subtotal: this.editedItem["jumlah"] * this.editedItem["harga"],
-                logAksi: "Edited",
+                logAksi: "Diubah",
                 logAktor: this.$cookies.get(this.$user).nama,
                 logWaktu: new Date().toLocaleString()
               })
@@ -419,7 +419,7 @@ export default {
                     harga: this.editedItem["harga"],
                     jumlah: this.editedItem["jumlah"],
                     subtotal: this.editedItem["jumlah"] * this.editedItem["harga"],
-                    logAksi: "Added",
+                    logAksi: "Ditambahkan",
                     logAktor: this.$cookies.get(this.$user).nama,
                     logWaktu: new Date().toLocaleString()
               })

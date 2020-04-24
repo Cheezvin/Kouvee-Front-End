@@ -13,14 +13,17 @@
         <v-text-field
           class="pr-12"
           v-model="search"
-          label="Search"
+          label="Cari"
           single-line
           hide-details
         ></v-text-field>
       </v-toolbar>
   </template>
     <template v-slot:item.logs="{item}">
-      {{item.logAksi}} by {{item.logAktor}} on {{item.logWaktu}}
+      {{item.logAksi}} Oleh {{item.logAktor}} Pada {{item.logWaktu}}
+    </template>
+    <template v-slot:item.id="{item}">
+      {{ukuran.map(function(x) {return x.id; }).indexOf(item.id)+1}}
     </template>
     <template v-slot:item.actions="{ item }">
       <v-icon
@@ -51,24 +54,24 @@ export default {
             search:'',
             headers: [
                 {
-                    text: 'ID',
+                    text: 'No.',
                     align: 'start',
                     sortable: false,
                     value: 'id',
                     filterable: false 
                 },
                 { text: 'Ukuran Hewan', value: 'nama', },
-                { text: 'Actions', value: 'actions', sortable: false, filterable: false  },
+                { text: 'Aksi', value: 'actions', sortable: false, filterable: false  },
                 { text: 'Log', value: 'logs', filterable: false, sortable: false },
             ],
         }
     },
     created() {
         this.$user.role = this.$cookies.get(this.$user).role
-        axios.get("http://luxinoire.com/api/showUkuranHewan").then(response => {
+        axios.get("http://luxinoire.com/api/deletedUkuranHewan").then(response => {
         this.temp = response.data
         for(var i in response.data) {
-            if(this.temp[i].logAksi == "Deleted") {
+            if(this.temp[i].logAksi == "Dihapus") {
                 this.ukuran.push(this.temp[i])
             }
         }
@@ -81,10 +84,10 @@ export default {
             const index = this.ukuran.indexOf(item)
             var temp = Object.assign({}, item)
             console.log(temp["id"])
-            confirm('Are you sure you want to restore this item?') && this.ukuran.splice(index, 1)&&
+            confirm('Kembalikan Item?') && this.ukuran.splice(index, 1)&&
             axios
             .put("http://luxinoire.com/api/updateUkuranHewan/"+item["id"], {
-                logAksi: 'Restored',
+                logAksi: 'Dikembalikan',
                 logAktor: this.$cookies.get(this.$user).nama,
                 logWaktu: new Date().toLocaleString()
             })
@@ -96,7 +99,7 @@ export default {
           const index = this.ukuran.indexOf(item)
           var temp = Object.assign({}, item)
           console.log(temp["id"])
-          confirm('Are you sure you want to delete this item?') && this.ukuran.splice(index, 1) &&
+          confirm('Hapus Item?') && this.ukuran.splice(index, 1) &&
           axios.delete("http://luxinoire.com/api/deleteUkuranHewan/"+ temp["id"])
           .then(response => {
             console.log(response)
