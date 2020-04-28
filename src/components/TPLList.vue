@@ -159,6 +159,13 @@
     <template v-slot:item.logs="{item}">
       {{item.logAksi}} Oleh {{item.logAktor}} Pada {{item.logWaktu}}
     </template>
+    <template v-slot:item.selesai="{item}">
+      <v-icon center color="green"
+        @click="selesaikan(item)"
+      >
+        mdi-check-circle
+      </v-icon>
+    </template>
     <template v-slot:item.id="{item}">
       {{tpl.map(function(x) {return x.id; }).indexOf(item.id)+1}}
     </template>
@@ -189,6 +196,7 @@ export default {
       { text: 'Harga', value: 'harga', sortable: false, filterable: false  },
       { text: 'Subtotal', value: 'subtotal', sortable: false, filterable: false  },
       { text: 'Aksi', value: 'actions', sortable: false, filterable: false  },
+      { text: 'Selesai', value: 'selesai', sortable: false, filterable: false  },
       { text: 'Log', value: 'logs', filterable: false, sortable: false },
     ],
     tpl: [],
@@ -200,6 +208,7 @@ export default {
     layanan:[],
     customer: [],
     hewan: [],
+    telpon: '',
     namaCust:'',
     selectedFile: null,
     editedIndex: -1,
@@ -264,7 +273,7 @@ export default {
         this.index = response.data.length
         this.total = 0
         for(var i in response.data) {
-            if(this.temp[i].logAksi != "Dihapus") {
+            if(this.temp[i].status != "Selesai") {
                 this.tpl.push(this.temp[i])
                 this.idTrans.push(this.temp[i].id_transaksi)
             }
@@ -291,6 +300,36 @@ export default {
            console.log(this.namaCust)
            this.reloadHewan(this.namaCust) 
         });
+    },
+
+    selesaikan(item) {
+        axios.get("http://luxinoire.com/api/searchTransaksiPembayaran/"+item.id_transaksi).then(response => {
+           this.telpon = response.data.telp_customer
+           console.log(this.telpon)
+           this.kirimSms(this.telpon,item.id)
+        });
+    },
+
+    kirimSms(nomor,id) {
+      confirm("Kirim Pesan ?")&&
+      axios
+        .post("http://luxinoire.com/api/sms", {
+              mobile: nomor
+        })
+        .then(response => {
+          console.log(response.data)
+          axios
+            .put("http://luxinoire.com/api/updateTPL/"+id, {
+                  status: "Selesai",
+                  logAksi: "Diubah",
+                  logAktor: this.$cookies.get(this.$user).nama,
+                  logWaktu: new Date().toLocaleString()
+            })
+            .then(response => {
+              console.log(response.data)
+            })
+        })&&
+        this.reloadData()
     },
 
     buka() {
@@ -441,6 +480,7 @@ export default {
                   nama_hewan:  this.editedItem["nama_hewan"],
                   ukuranHewan: this.editedItem["ukuranHewan"],
                   jenisHewan:  this.editedItem["jenisHewan"],
+                  status: "Belum Selesai",
                   logAksi: "Ditambahkan",
                   logAktor: this.$cookies.get(this.$user).nama,
                   logWaktu: new Date().toLocaleString()

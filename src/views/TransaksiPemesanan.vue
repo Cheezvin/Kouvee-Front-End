@@ -284,6 +284,7 @@ export default {
           })
           .then(response => {
             console.log(response.data)
+            this.cetakNota(this.kode)
           })
           this.buat = false
           this.$cookies.set(this.$incrementPO.value, parseInt(this.$cookies.get(this.$incrementPO.value))+1)
@@ -292,6 +293,11 @@ export default {
       else {
         alert("Transaksi Kosong")
       }
+    },
+
+    cetakNota(id) {
+      confirm("Cetak Surat Pemesanan ?")&&
+      window.open("http://luxinoire.com/api/downloadPDFPemesanan/"+id, "_blank")
     },
 
     restock(item) {

@@ -228,6 +228,7 @@ export default {
       this.reloadData()
     },
 
+
     restock(item) {
       axios.get("http://luxinoire.com/api/searchTransaksiPemesanan/"+item.id_transaksi).then(response => {
             this.temp = response.data

@@ -59,12 +59,24 @@ import TransaksiPemesanan from '../views/TransaksiPemesanan.vue'
 import DelTranspemesanan from '../components/DeletedTransaksiPemesanan.vue'
 import PemesananPembayaran from '../components/PemesananPembayaranList.vue'
 import DelPemesananPembayaran from '../components/DeletedPemesananPembayaran.vue'
+import LaporanProduk from '../views/LaporanProduk.vue'
+import LaporanLayanan from '../views/LaporanLayanan.vue'
 
 const routes = [
   {
     path: '/',
     name: 'ProductList',
     component: Produk
+  },
+  {
+    path: '/laporan-produk',
+    name: 'Laporan Produk',
+    component: LaporanProduk
+  },
+  {
+    path: '/laporan-layanan',
+    name: 'Laporan Layanan',
+    component: LaporanLayanan
   },
   {
     path: '/menu-transaksi-pembayaran',

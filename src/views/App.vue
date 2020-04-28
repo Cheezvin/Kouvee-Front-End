@@ -143,6 +143,28 @@
             <v-list-item-title>Transaksi Pemesanan</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item>
+            <v-list-item-title class="text-center font-weight-black">
+              <v-icon>mdi-clipboard-text</v-icon>
+              Report
+            </v-list-item-title>
+        </v-list-item>
+         <v-list-item to="/laporan-produk" v-if="$user.role == 'Admin'">
+          <v-list-item-action >
+            <v-icon>mdi-chevron-right</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Laporan Produk</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+         <v-list-item to="/laporan-layanan" v-if="$user.role == 'Admin'">
+          <v-list-item-action >
+            <v-icon>mdi-chevron-right</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Laporan Layanan</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
       
 

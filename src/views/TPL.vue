@@ -187,6 +187,7 @@ export default {
       { text: 'Ukuran', value: 'ukuranHewan', },
       { text: 'Harga', value: 'harga', sortable: false, filterable: false  },
       { text: 'Subtotal', value: 'subtotal', sortable: false, filterable: false  },
+      { text: 'Status', value: 'status', filterable: false  },
       { text: 'Aksi', value: 'actions', sortable: false, filterable: false  },
       { text: 'Log', value: 'logs', filterable: false, sortable: false },
     ],
@@ -458,6 +459,7 @@ export default {
                   nama_hewan:  this.editedItem["nama_hewan"],
                   ukuranHewan: this.editedItem["ukuranHewan"],
                   jenisHewan:  this.editedItem["jenisHewan"],
+                  status: "Belum Selesai",
                   logAksi: "Ditambahkan",
                   logAktor: this.$cookies.get(this.$user).nama,
                   logWaktu: new Date().toLocaleString()
