@@ -61,6 +61,7 @@ import PemesananPembayaran from '../components/PemesananPembayaranList.vue'
 import DelPemesananPembayaran from '../components/DeletedPemesananPembayaran.vue'
 import LaporanProduk from '../views/LaporanProduk.vue'
 import LaporanLayanan from '../views/LaporanLayanan.vue'
+import LaporanPemesanan from '../views/LaporanPemesanan.vue'
 
 const routes = [
   {
@@ -72,6 +73,11 @@ const routes = [
     path: '/laporan-produk',
     name: 'Laporan Produk',
     component: LaporanProduk
+  },
+  {
+    path: '/laporan-pemesanan',
+    name: 'Laporan Pemesanan',
+    component: LaporanPemesanan
   },
   {
     path: '/laporan-layanan',

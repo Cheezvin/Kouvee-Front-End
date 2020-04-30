@@ -91,6 +91,9 @@ export default {
     dialog: false,
     search: '',
     kode: '',
+    jual: 0,
+    penam: 0,
+    penTot: 0,
     loading: false,
     buat: false,
     headers: [
@@ -149,6 +152,21 @@ export default {
       logAktor: '',
       logWaktu: ''
     },
+    namaBulan : [
+      "Januari", 
+      "Februari", 
+      "Maret", 
+      "April", 
+      "Mei", 
+      "Juni", 
+      "Juli", 
+      "Agustus", 
+      "September", 
+      "Oktober", 
+      "November", 
+      "Desember"],
+      tahun : '',
+      bulan: ''
   }),
 
   computed: {
@@ -213,12 +231,64 @@ export default {
       return n
     },
 
+    BulanTahun(kode) {
+       this.bulan = kode.charAt(8) + kode.charAt(9)
+       this.tahun = kode.charAt(5) + kode.charAt(6)
+       this.tahun = parseInt(this.tahun) + 2000
+       this.bulan = this.namaBulan[parseInt(this.bulan)-1]
+    },
+
+    cekProduk(produk,pemesanan) {
+      var stat = false
+      axios.get("http://luxinoire.com/api/searchLaporanPemesananTahun/"+this.tahun).then(response => {
+          this.temp = response.data
+          for(var i in response.data) {
+             if(produk.nama == this.temp[i].nama_produk && this.bulan == this.temp[i].bulan) {
+                this.restockLaporanProduk(produk, this.temp[i].id, pemesanan.jumlah)
+                stat = true
+             }
+          }
+          if(stat != true) {
+            
+            axios
+              .post("http://luxinoire.com/api/createLaporanPemesanan", {
+                  nama_produk: produk.nama,
+                  jumlah_dipesan : pemesanan.jumlah,
+                  total_pemesanan: produk.harga / 2,
+                  tahun: this.tahun,
+                  bulan: this.bulan
+              })
+              .then(response => {
+                console.log(response.data)
+              })
+          }
+        })
+    },
+
+    restockLaporanProduk(item, id, jumlah) {
+        this.penam = 0
+        this.penTot = 0
+        axios.get("http://luxinoire.com/api/searchLaporanPemesanan/"+id).then(response => {
+            this.penam = response.data.jumlah_dipesan+jumlah
+            this.penTot = response.data.total_pemesanan+(item.harga / 2)
+            axios
+            .put("http://luxinoire.com/api/updateLaporanPemesanan/"+id, {
+                jumlah_dipesan: this.penam,
+                total_pemesanan: this.penTot
+            })
+            .then(response => {
+              console.log(response.data)
+            })
+        })
+    },
+
+
     lunas(item) {
       const index = this.transpem.indexOf(item)
       confirm('Update Stok Produk ?')&&this.transpem.splice(index, 1)&&
       axios
         .put("http://luxinoire.com/api/updatePemesananPembayaran/"+item.id, {
-            status: "Lunas"
+            status: "Pending"
         })
         .then(response => {
             console.log(response.data)
@@ -230,6 +300,7 @@ export default {
 
 
     restock(item) {
+      this.BulanTahun(item.id_transaksi)
       axios.get("http://luxinoire.com/api/searchTransaksiPemesanan/"+item.id_transaksi).then(response => {
             this.temp = response.data
             for(var i in response.data) {
@@ -240,8 +311,10 @@ export default {
 
     aserehe(item) {
         this.loading = true
+        this.jual = 0
         axios.get("http://luxinoire.com/api/searchProduk/"+item.idProduk).then(response => {
             this.penampung = response.data.stok + item.jumlah
+            this.cekProduk(response.data,item)
             console.log(this.penampung)
             axios.put("http://luxinoire.com/api/updateProduk/"+item.idProduk, {
                 stok: this.penampung

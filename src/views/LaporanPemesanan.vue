@@ -10,7 +10,7 @@
   >
     <template v-slot:top>
       <v-toolbar flat color="white" class="mt-2 mb-2">
-        <v-toolbar-title>Laporan Layanan</v-toolbar-title>
+        <v-toolbar-title>Laporan Produk</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -24,6 +24,12 @@
           single-line
           hide-details
         ></v-text-field>
+        <v-btn dark color="red" to="/menu/deleted-tpl">
+          <v-icon dark>mdi-delete</v-icon>
+        </v-btn>
+        <v-btn class="ml-2" dark color="indigo" @click="buat=true">
+          <v-icon dark>mdi-plus</v-icon>
+        </v-btn>
       </v-toolbar>
     </template>
     <template v-slot:item.id="{item}">
@@ -32,14 +38,11 @@
     <template v-slot:footer>
       <v-toolbar flat color="white" class="mt-8 mb-2 ml-12">
         <v-spacer/>
-          <v-btn dark color="red" @click="cetakLaris">
-            Layanan Terlaris
-          </v-btn>
           <v-btn class="ml-2" dark color="indigo" @click="cetakTahunan">
-            Pendapatan Tahunan
+            Pengadaan Tahunan
           </v-btn>
           <v-btn class="ml-2" dark color="indigo" @click="cetakBulanan">
-            Pendapatan Bulanan
+            Pengadaan Bulanan
           </v-btn>
         <v-spacer/>
       </v-toolbar>
@@ -64,9 +67,9 @@ export default {
       },
       { text: 'Bulan', value: 'bulan', },
       { text: 'Tahun', value: 'tahun', },
-      { text: 'Nama Layanan', value: 'nama_layanan', },
-      { text: 'Jumlah Penjualan', value: 'jumlah_terjual', sortable: false, filterable: false },
-      { text: 'Total Penjualan', value: 'total_penjualan', sortable: false, filterable: false },
+      { text: 'Nama Produk', value: 'nama_produk', },
+      { text: 'Jumlah Dipesan', value: 'jumlah_dipesan', sortable: false, filterable: false },
+      { text: 'Total Pemesanan', value: 'total_pemesanan', sortable: false, filterable: false },
       
     ],
     report: [],
@@ -141,26 +144,19 @@ export default {
 
   methods: {
     init() {
-      axios.get("http://luxinoire.com/api/showLaporanLayanan").then(response => {
+      axios.get("http://luxinoire.com/api/showLaporanPemesanan").then(response => {
         this.report = response.data
       })
     },
-
-    cetakLaris() {
-      let current_datetime = new Date()
-      confirm("Cetak Laporan Produk Terlaris ?")
-      &&window.open("http://luxinoire.com/api/reportLayananLaris/"+current_datetime.getFullYear(), "_blank")
-    },
-
     cetakTahunan() {
       let current_datetime = new Date()
       confirm("Cetak Laporan Pendapatan Pertahun ?")
-      &&window.open("http://luxinoire.com/api/reportPendapatanTahun/"+current_datetime.getFullYear(), "_blank")
+      &&window.open("http://luxinoire.com/api/downloadPDFPemesananTahunan/"+current_datetime.getFullYear(), "_blank")
     },
 
     cetakBulanan() {
       confirm("Cetak Laporan Pendapatan Perbulan ?")
-      &&window.open("http://luxinoire.com/api/reportPerbulan", "_blank")
+      &&window.open("http://luxinoire.com/api/downloadPDFPemesananPerbulan", "_blank")
     },
   },
 }

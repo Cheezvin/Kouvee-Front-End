@@ -24,19 +24,30 @@
           single-line
           hide-details
         ></v-text-field>
-        <v-btn dark color="red" to="/menu/deleted-tpl">
-          <v-icon dark>mdi-delete</v-icon>
-        </v-btn>
-        <v-btn class="ml-2" dark color="indigo" @click="buat=true">
-          <v-icon dark>mdi-plus</v-icon>
-        </v-btn>
       </v-toolbar>
     </template>
     <template v-slot:item.id="{item}">
       {{report.map(function(x) {return x.id; }).indexOf(item.id)+1}}
     </template>
+    <template v-slot:footer>
+      <v-toolbar flat color="white" class="mt-8 mb-2 ml-12">
+        <v-spacer/>
+          <v-btn dark color="red" @click="cetakLaris">
+            Produk Terlaris
+          </v-btn>
+          <v-btn class="ml-2" dark color="indigo" @click="cetakTahunan">
+            Pendapatan Tahunan
+          </v-btn>
+          <v-btn class="ml-2" dark color="indigo" @click="cetakBulanan">
+            Pendapatan Bulanan
+          </v-btn>
+        <v-spacer/>
+      </v-toolbar>
+  </template>
   </v-data-table>
 </template>
+
+
 
 <script>
 import axios from 'axios';
@@ -136,6 +147,23 @@ export default {
         this.report = response.data
       })
     },
-  },
+
+    cetakLaris() {
+      let current_datetime = new Date()
+      confirm("Cetak Laporan Produk Terlaris ?")
+      &&window.open("http://luxinoire.com/api/reportProdukLaris/"+current_datetime.getFullYear(), "_blank")
+    },
+
+    cetakTahunan() {
+      let current_datetime = new Date()
+      confirm("Cetak Laporan Pendapatan Pertahun ?")
+      &&window.open("http://luxinoire.com/api/reportPendapatanTahun/"+current_datetime.getFullYear(), "_blank")
+    },
+
+    cetakBulanan() {
+      confirm("Cetak Laporan Pendapatan Perbulan ?")
+      &&window.open("http://luxinoire.com/api/reportPerbulan", "_blank")
+    },
+  }
 }
 </script>

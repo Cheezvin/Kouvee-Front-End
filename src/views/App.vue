@@ -165,6 +165,14 @@
             <v-list-item-title>Laporan Layanan</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item to="/laporan-pemesanan" v-if="$user.role == 'Admin'">
+          <v-list-item-action >
+            <v-icon>mdi-chevron-right</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Laporan Pemesanan</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
       
 
