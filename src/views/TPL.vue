@@ -3,6 +3,7 @@
     :headers="headers"
     :items="tpl"
     :search="search"
+    style="color: #30475e;"
     class="elevation-12 mx-12 mt-12 mb-12 pb-2 pt-2 subtitle-2"
     dense
     disable-pagination
@@ -10,7 +11,7 @@
   >
     <template v-slot:top>
       <v-toolbar flat color="white" class="mt-2 mb-2">
-        <v-toolbar-title>Transaksi Layanan</v-toolbar-title>
+        <v-toolbar-title style="color: #30475e;">Transaksi Layanan</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -25,6 +26,7 @@
         <v-icon>mdi-magnify</v-icon>
         <v-text-field
           class="pr-12"
+          color="#30475e"
           v-model="search"
           label="Cari"
           single-line
@@ -32,13 +34,13 @@
         ></v-text-field>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on }">
-            <v-btn  fab dark color="red" v-on="on" to="/menu/deleted-tpl">
+            <v-btn   dark color="#f2a365" v-on="on" to="/menu/deleted-tpl">
               <v-icon dark>mdi-delete</v-icon>
             </v-btn>
-             <v-btn class="mr-1" fab dark color="indigo" v-show="ada" v-on="on">
+             <v-btn class="mr-1"  dark color="#f2a365" v-show="ada" v-on="on">
               <v-icon dark>mdi-plus</v-icon>
             </v-btn>
-            <v-btn class="mr-1" fab dark color="green" v-on="on" to="/menu/tpl-list">
+            <v-btn class="mr-1"  dark color="#f2a365" v-on="on" to="/menu/tpl-list">
               <v-icon dark>mdi-format-list-bulleted</v-icon>
             </v-btn>
           </template>
@@ -126,12 +128,14 @@
       <v-icon
         small
         class="mr-2"
+        color="green"
         @click="editItem(item)"
       >
         mdi-pencil
       </v-icon>
       <v-icon
         small
+        color="red"
         @click="deleteItem(item)"
       >
         mdi-delete
@@ -146,19 +150,19 @@
     <template v-slot:no-data>
       Transaksi Kosong, Mohon Tambahkan Customer Dahulu
       <v-spacer/>
-      <v-btn color="primary" v-show="!ada" @click="buat=true">Tambah Customer</v-btn>
+      <v-btn color="#f2a365" dark v-show="!ada" @click="buat=true">Tambah Customer</v-btn>
     </template>
     <template v-slot:footer>
        <v-toolbar flat color="white" class="mt-8 mb-2 ml-12">
-        <v-toolbar-title>Total Harga</v-toolbar-title>
+        <v-toolbar-title style="color: #30475e;">Total Harga</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
           vertical
         ></v-divider>
-        <v-toolbar-title>{{total}}</v-toolbar-title>
+        <v-toolbar-title style="color: #30475e;">{{total}}</v-toolbar-title>
         <v-spacer/>
-        <v-btn color="primary" class="px-10 mr-12 py-5" @click="buka">Buat Transaksi</v-btn>
+        <v-btn color="#f2a365" dark class="px-10 mr-12 py-5" @click="buka">Buat Transaksi</v-btn>
        </v-toolbar>
     </template>
   </v-data-table>

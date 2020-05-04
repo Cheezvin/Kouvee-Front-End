@@ -3,6 +3,7 @@
     :headers="headers"
     :items="transpem"
     :search="search"
+    style="color: #30475e;"
     class="elevation-12 mx-12 mt-12 mb-12 pb-2 pt-2 subtitle-2"
     dense
     disable-pagination
@@ -10,7 +11,7 @@
   >
     <template v-slot:top>
       <v-toolbar flat color="white" class="mt-2 mb-2">
-        <v-toolbar-title>Transaksi Pemesanan</v-toolbar-title>
+        <v-toolbar-title style="color: #30475e;">Transaksi Pemesanan</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -22,9 +23,10 @@
           v-model="search"
           label="Cari"
           single-line
+          color= "#30475e"
           hide-details
         ></v-text-field>
-        <v-btn  fab dark color="red" to="/menu/deleted-pemesanan-pembayaran">
+        <v-btn dark color="#f2a365" to="/menu/deleted-pemesanan-pembayaran">
           <v-icon dark>mdi-delete</v-icon>
         </v-btn>
       </v-toolbar>
@@ -49,9 +51,9 @@
             <v-progress-circular
               :size="100"
               :width="10"
-              color="primary"
+              color="#f2a365"
               indeterminate>
-              Uploading
+              Menyimpan
             </v-progress-circular>
         </v-layout>
       </v-container>
@@ -60,12 +62,14 @@
     <template v-slot:item.actions="{ item }">
       <v-icon
         small
+        color="red"
         @click="deleteItem(item)"
       >
         mdi-delete
       </v-icon>
       <v-icon
         small
+        color="green"
         @click="lunas(item)"
       >
         mdi-check-circle
@@ -78,7 +82,7 @@
       {{transpem.map(function(x) {return x.id; }).indexOf(item.id)+1}}
     </template>
     <template v-slot:item.detail="{item}">
-      <v-btn color="primary" @click="detailItem(item.id_transaksi)">Detail</v-btn>
+      <v-btn color="#f2a365" dark @click="detailItem(item.id_transaksi)">Detail</v-btn>
     </template>
   </v-data-table>
 </template>
@@ -288,7 +292,7 @@ export default {
       confirm('Update Stok Produk ?')&&this.transpem.splice(index, 1)&&
       axios
         .put("http://luxinoire.com/api/updatePemesananPembayaran/"+item.id, {
-            status: "Pending"
+            status: "Lunas"
         })
         .then(response => {
             console.log(response.data)

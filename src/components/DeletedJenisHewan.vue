@@ -3,6 +3,7 @@
     :headers="headers"
     :items="jenis"
     :search="search"
+    style="color: #30475e;"
     class="elevation-12 mx-12 mt-12 mb-12 pb-2 pt-2 subtitle-2"
     dense
     hide-default-footer
@@ -14,6 +15,7 @@
           class="pr-12"
           v-model="search"
           label="Cari"
+          color= "#30475e"
           single-line
           hide-details
         ></v-text-field>
@@ -29,12 +31,14 @@
       <v-icon
         small
         class="mr-2"
+        color="green"
         @click="restore(item)"
       >
         mdi-reload
       </v-icon>
       <v-icon
         small
+        color="red"
         class="mr-2"
         @click="deleteItem(item)"
       >

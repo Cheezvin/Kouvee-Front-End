@@ -3,6 +3,7 @@
     :headers="headers"
     :items="report"
     :search="search"
+    style="color: #30475e;"
     class="elevation-12 mx-12 mt-12 mb-12 pb-2 pt-2 subtitle-2"
     dense
     disable-pagination
@@ -10,7 +11,7 @@
   >
     <template v-slot:top>
       <v-toolbar flat color="white" class="mt-2 mb-2">
-        <v-toolbar-title>Laporan Produk</v-toolbar-title>
+        <v-toolbar-title style="color: #30475e;">Laporan Produk</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -19,6 +20,7 @@
         <v-icon>mdi-magnify</v-icon>
         <v-text-field
           class="pr-12"
+          color="#30475e"
           v-model="search"
           label="Cari"
           single-line
@@ -32,13 +34,13 @@
     <template v-slot:footer>
       <v-toolbar flat color="white" class="mt-8 mb-2 ml-12">
         <v-spacer/>
-          <v-btn dark color="red" @click="cetakLaris">
+          <v-btn dark color="#f2a365" @click="cetakLaris">
             Produk Terlaris
           </v-btn>
-          <v-btn class="ml-2" dark color="indigo" @click="cetakTahunan">
+          <v-btn class="ml-2" dark color="#f2a365" @click="cetakTahunan">
             Pendapatan Tahunan
           </v-btn>
-          <v-btn class="ml-2" dark color="indigo" @click="cetakBulanan">
+          <v-btn class="ml-2" dark color="#f2a365" @click="cetakBulanan">
             Pendapatan Bulanan
           </v-btn>
         <v-spacer/>

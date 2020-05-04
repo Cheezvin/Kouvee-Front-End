@@ -3,13 +3,14 @@
     :headers="headers"
     :items="services"
     :search="search"
+    style="color: #30475e;"
     class="elevation-12 mx-12 mt-12 mb-12 pb-2 pt-2 subtitle-2"
     dense
     disable-pagination
     hide-default-footer
   >
     <template v-slot:top>
-      <v-toolbar flat color="white" class="mt-2 mb-2">
+      <v-toolbar style="color: #30475e;" flat color="white" class="mt-2 mb-2">
         <v-toolbar-title>Layanan</v-toolbar-title>
         <v-divider
           class="mx-4"
@@ -21,15 +22,16 @@
           class="pr-12"
           v-model="search"
           label="Cari"
+          color="#30475e"
           single-line
           hide-details
         ></v-text-field>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on }">
-             <v-btn  fab dark color="red" v-on="on" to="/menu/deleted-layanan">
+             <v-btn  dark color="#f2a365" v-on="on" to="/menu/deleted-layanan">
               <v-icon dark>mdi-delete</v-icon>
             </v-btn>
-             <v-btn class="mr-3" fab dark color="indigo" v-on="on">
+             <v-btn class="mr-3" dark color="#f2a365" v-on="on">
               <v-icon dark>mdi-plus</v-icon>
             </v-btn>
           </template>
@@ -69,9 +71,9 @@
             <v-progress-circular
               :size="100"
               :width="10"
-              color="primary"
+              color="#f2a365"
               indeterminate>
-              Uploading
+              Menyimpan
             </v-progress-circular>
         </v-layout>
       </v-container>
@@ -81,6 +83,7 @@
     </template>
     <template v-slot:item.actions="{ item }">
       <v-icon
+        color="green"
         small
         class="mr-2"
         @click="editItem(item)"
@@ -88,6 +91,7 @@
         mdi-pencil
       </v-icon>
       <v-icon
+        color="red"
         small
         @click="deleteItem(item)"
       >

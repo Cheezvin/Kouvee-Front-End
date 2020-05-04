@@ -29,6 +29,7 @@ Vue.use(VueCookies)
 //Components and View
 import Login from '../views/Login.vue'
 import Welcome from '../components/WelcomePage.vue'
+import AboutUs from '../components/AboutUs.vue'
 import ProdMan from '../views/ProductManage.vue'
 import LayMan from '../views/LayananManage.vue'
 import Produk from '../components/ProductList.vue'
@@ -68,6 +69,11 @@ const routes = [
     path: '/',
     name: 'ProductList',
     component: Produk
+  },
+  {
+    path: '/aboutus',
+    name: 'About Us',
+    component: AboutUs
   },
   {
     path: '/laporan-produk',

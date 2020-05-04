@@ -3,6 +3,7 @@
     :headers="headers"
     :items="tpl"
     :search="search"
+    style="color: #30475e;"
     class="elevation-12 mx-12 mt-12 mb-12 pb-2 pt-2 subtitle-2"
     dense
     hide-default-footer
@@ -13,6 +14,7 @@
         <v-text-field
           class="pr-12"
           v-model="search"
+          color= "#30475e"
           label="Cari"
           single-line
           hide-details
@@ -29,6 +31,7 @@
       <v-icon
         small
         class="mr-2"
+        color="green"
         @click="restore(item)"
       >
         mdi-reload
@@ -36,6 +39,7 @@
       <v-icon
         small
         class="mr-2"
+        color="red"
         @click="deleteItem(item)"
       >
         mdi-delete

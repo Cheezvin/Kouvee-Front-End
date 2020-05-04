@@ -5,11 +5,12 @@
     :search="search"
     class="elevation-12 mx-12 mt-12 mb-12 pb-2 pt-2 subtitle-2"
     dense
+    style="color: #30475e;"
     hide-default-footer
   >
     <template v-slot:top>
       <v-toolbar flat color="white" class="mt-2 mb-2">
-        <v-toolbar-title>Supplier</v-toolbar-title>
+        <v-toolbar-title style="color: #30475e;">Supplier</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -20,15 +21,16 @@
           class="pr-12"
           v-model="search"
           label="Cari"
+          color="#30475e"
           single-line
           hide-details
         ></v-text-field>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on }">
-             <v-btn  fab dark color="red" v-on="on" to="/menu/deleted-supplier">
+             <v-btn  dark color="#f2a365" v-on="on" to="/menu/deleted-supplier">
               <v-icon dark>mdi-delete</v-icon>
             </v-btn>
-             <v-btn class="mr-3" fab dark color="indigo" v-on="on">
+             <v-btn class="mr-3"  dark color="#f2a365" v-on="on">
               <v-icon dark>mdi-plus</v-icon>
             </v-btn>
           </template>
@@ -69,12 +71,14 @@
       <v-icon
         small
         class="mr-2"
+        color="green"
         @click="editItem(item)"
       >
         mdi-pencil
       </v-icon>
       <v-icon
         small
+        color="red"
         @click="deleteItem(item)"
       >
         mdi-delete

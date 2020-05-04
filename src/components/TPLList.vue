@@ -3,6 +3,7 @@
     :headers="headers"
     :items="tpl"
     :search="search"
+    style="color: #30475e;"
     class="elevation-12 mx-12 mt-12 mb-12 pb-2 pt-2 subtitle-2"
     dense
     disable-pagination
@@ -10,7 +11,7 @@
   >
     <template v-slot:top>
       <v-toolbar flat color="white" class="mt-2 mb-2">
-        <v-toolbar-title>Transaksi Layanan</v-toolbar-title>
+        <v-toolbar-title style="color: #30475e;">Transaksi Layanan</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -21,15 +22,16 @@
           class="pr-12"
           v-model="search"
           label="Cari"
+          color= "#30475e"
           single-line
           hide-details
         ></v-text-field>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on }">
-            <v-btn  fab dark color="red" v-on="on" to="/menu/deleted-tpl">
+            <v-btn  dark color="#f2a365" v-on="on" to="/menu/deleted-tpl">
               <v-icon dark>mdi-delete</v-icon>
             </v-btn>
-             <v-btn class="mr-1" fab dark color="indigo" @click="buat=true">
+             <v-btn class="mr-1" dark color="#f2a365" @click="buat=true">
               <v-icon dark>mdi-plus</v-icon>
             </v-btn>
           </template>
@@ -145,11 +147,13 @@
       <v-icon
         small
         class="mr-2"
+        color="green"
         @click="editItem(item)"
       >
         mdi-pencil
       </v-icon>
       <v-icon
+        color="red"
         small
         @click="deleteItem(item)"
       >
@@ -265,6 +269,8 @@ export default {
 
   methods: {
     initialize () {
+      this.selectedL = []
+      this.selectedH = []
       this.kode = ''
       this.$user.role = this.$cookies.get(this.$user).role
       axios.get("http://luxinoire.com/api/showTPL").then(response => {

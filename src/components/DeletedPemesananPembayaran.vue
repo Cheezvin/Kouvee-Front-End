@@ -3,6 +3,7 @@
     :headers="headers"
     :items="transpem"
     :search="search"
+    style="color: #30475e;"
     class="elevation-12 mx-12 mt-12 mb-12 pb-2 pt-2 subtitle-2"
     dense
     hide-default-footer
@@ -14,6 +15,7 @@
           class="pr-12"
           v-model="search"
           label="Cari"
+          color= "#30475e"
           single-line
           hide-details
         ></v-text-field>
@@ -40,12 +42,13 @@
       {{item.logAksi}} Oleh {{item.logAktor}} Pada {{item.logWaktu}}
     </template>
     <template v-slot:item.detail="{item}">
-      <v-btn color="primary" @click="detailItem(item.id_transaksi)">Detail</v-btn>
+      <v-btn color="#f2a365" dark @click="detailItem(item.id_transaksi)">Detail</v-btn>
     </template>
     <template v-slot:item.actions="{ item }">
       <v-icon
         small
         class="mr-2"
+        color="green"
         @click="restore(item)"
       >
         mdi-reload
@@ -53,6 +56,7 @@
       <v-icon
         small
         class="mr-2"
+        color="red"
         @click="deleteItem(item)"
       >
         mdi-delete

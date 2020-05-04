@@ -1,5 +1,9 @@
 <template>
-  <v-card-text class="text-center display-3 font-weight-black">Welcome to Menu Page, {{this.$cookies.get(this.$user).nama}}</v-card-text>
+  <v-container>
+    <v-card-text style="color:#f2a365;" class="text-center display-3 font-weight-black">Selamat Datang, {{this.$cookies.get(this.$user).nama}}</v-card-text>
+    <v-card-text style="color:#f2a365;" class="text-center display-3 font-weight-black">Role anda adalah  : {{this.$cookies.get(this.$user).role}}</v-card-text>
+    <v-card-text style="color:#f2a365;" class="text-center display-3 font-weight-black">Selamat Bekerja</v-card-text>
+  </v-container>
 </template>
 
 <script>

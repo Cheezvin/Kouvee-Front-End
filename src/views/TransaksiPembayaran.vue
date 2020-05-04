@@ -3,6 +3,7 @@
     :headers="headers"
     :items="transpem"
     :search="search"
+    style="color: #30475e;"
     class="elevation-12 mx-12 mt-12 mb-12 pb-2 pt-2 subtitle-2"
     dense
     disable-pagination
@@ -10,7 +11,7 @@
   >
     <template v-slot:top>
       <v-toolbar flat color="white" class="mt-2 mb-2">
-        <v-toolbar-title>Transaksi Pembayaran</v-toolbar-title>
+        <v-toolbar-title style="color: #30475e;">Transaksi Pembayaran</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -19,12 +20,13 @@
         <v-icon>mdi-magnify</v-icon>
         <v-text-field
           class="pr-12"
+          color="#30475e"
           v-model="search"
           label="Cari"
           single-line
           hide-details
         ></v-text-field>
-        <v-btn  fab dark color="red" to="/menu/deleted-transaksi-pembayaran">
+        <v-btn dark color="#f2a365" to="/menu/deleted-transaksi-pembayaran">
             <v-icon dark>mdi-delete</v-icon>
         </v-btn>
       </v-toolbar>
@@ -35,9 +37,9 @@
             <v-progress-circular
               :size="100"
               :width="10"
-              color="primary"
+              color="#f2a365"
               indeterminate>
-              Uploading
+              Menyimpan
             </v-progress-circular>
         </v-layout>
       </v-container>
@@ -61,7 +63,7 @@
     <v-dialog v-model="diskon" max-width="500px">
           <v-card>
             <v-card-title>
-              <span class="headline">Create Transaction</span>
+              <span class="headline">Pembayaran</span>
             </v-card-title>
             <v-card-text>
               <v-container>
@@ -86,12 +88,14 @@
       <v-icon
         small
         class="mr-2"
+        color="green"
         @click="addDisc(item)"
       >
         mdi-check-circle
       </v-icon>
       <v-icon
         small
+        color="red"
         @click="deleteItem(item)"
       >
         mdi-delete
@@ -104,7 +108,7 @@
       {{transpem.map(function(x) {return x.id; }).indexOf(item.id)+1}}
     </template>
     <template v-slot:item.details="{item}">
-      <v-btn color="primary" @click="detailItem(item.id_transaksi)">Detail</v-btn>
+      <v-btn color="#f2a365" dark @click="detailItem(item.id_transaksi)">Detail</v-btn>
     </template>
   </v-data-table>
 </template>
