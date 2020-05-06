@@ -207,6 +207,24 @@
     <v-content>
         <router-view/>
     </v-content>
+
+    <template>
+      <v-footer
+        dark
+        padless
+      >
+        <v-card
+          class="flex"
+          flat
+          color="#30475e"
+          tile
+        >
+          <v-card-text class="py-5 white--text text-center">
+            {{ new Date().getFullYear() }} — <strong>Kouvee Petshop</strong>
+          </v-card-text>
+        </v-card>
+      </v-footer>
+    </template>
   
   </v-app>
 </template>
