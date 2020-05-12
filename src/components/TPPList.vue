@@ -318,27 +318,25 @@ export default {
     }, 
 
     hitungTotal(kode) {
-      var self = this
       var id = kode
-      this.total = 0
-      setTimeout(function() {
-        axios.get("http://luxinoire.com/api/searchTPP/"+id).then(response => {
-          self.temp = response.data
+      axios.get("http://luxinoire.com/api/searchTPP/"+id).then(response => {
+          this.total = 0
+          this.temp = response.data
           for(var i in response.data) {
-              if(self.temp[i].logAksi != "Dihapus") {
-                  self.total = self.total + self.temp[i].subtotal
+              if(this.temp[i].logAksi != "Dihapus") {
+                  this.total = this.total + (this.temp[i].harga * this.temp[i].jumlah)
               }
           }
-        });
-      }, 1500);
-      setTimeout(function() {
-        axios.put("http://luxinoire.com/api/updateTransaksiPembayaran/"+id, {
-          total_harga: self.total
-        })
-        .then(response => {
-          console.log(response.data)
-        });
-      }, 2500);
+          var self = this
+          setTimeout(function() {
+              axios.put("http://luxinoire.com/api/updateTransaksiPembayaran/"+id, {
+                total_harga: self.total
+              })
+              .then(response => {
+                console.log(response.data)
+              });
+          },500);
+      });
     },
 
     deleteItem (item) {
@@ -351,9 +349,9 @@ export default {
         })
         .then(response => {
           console.log(response.data)
+          this.restock(item)
+          this.hitungTotal(item.id_transaksi)
         })&&
-        this.restock(item)
-        this.hitungTotal(item.id_transaksi)
         this.reloadData()
     },
 
@@ -382,12 +380,13 @@ export default {
                 harga: this.editedItem["harga"],
                 jumlah: this.editedItem["jumlah"],
                 subtotal: this.editedItem["jumlah"] * this.editedItem["harga"],
-                logAksi: "Edited",
+                logAksi: "Diubah",
                 logAktor: this.$cookies.get(this.$user).nama,
                 logWaktu: new Date().toLocaleString()
               })
               .then(response => {
                 console.log(response.data)
+                this.hitungTotal(this.kode)
               });
               this.restock(this.tempItem)
               axios.put("http://luxinoire.com/api/updateProduk/"+this.editedItem["id_produk"], {
@@ -406,6 +405,7 @@ export default {
               })
               .then(response => {
                 console.log(response.data)
+                this.hitungTotal(this.kode)
               });
             
               axios.put("http://luxinoire.com/api/updateProduk/"+this.editedItem["id_produk"], {
@@ -429,6 +429,7 @@ export default {
               })
               .then(response => {
                 console.log(response.data)
+                this.hitungTotal(this.kode)
               });
               
 
@@ -437,7 +438,7 @@ export default {
               })
             }
         }
-        this.hitungTotal(this.kode)
+        
         this.reloadData()
         this.close()
     },

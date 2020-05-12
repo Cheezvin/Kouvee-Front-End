@@ -416,10 +416,8 @@ export default {
         })
         .then(response => {
           console.log(response.data)
+          this.hitungTotal(item.id_transaksi)
         })&&
-        this.hitungTotal(item.id_transaksi)
-        &&
-        this.restock(item)
         this.reloadData()
     },
 
@@ -434,27 +432,25 @@ export default {
     },
 
     hitungTotal(kode) {
-      var self = this
       var id = kode
-      this.total = 0
-      setTimeout(function() {
-        axios.get("http://luxinoire.com/api/searchTPL/"+id).then(response => {
-          self.temp = response.data
+      axios.get("http://luxinoire.com/api/searchTPL/"+id).then(response => {
+          this.total = 0
+          this.temp = response.data
           for(var i in response.data) {
-              if(self.temp[i].logAksi != "Dihapus") {
-                  self.total = self.total + self.temp[i].subtotal
+              if(this.temp[i].logAksi != "Dihapus") {
+                  this.total = this.total + this.temp[i].subtotal
               }
           }
-        });
-      }, 1500);
-      setTimeout(function() {
-        axios.put("http://luxinoire.com/api/updateTransaksiPembayaran/"+id, {
-          total_harga: self.total
-        })
-        .then(response => {
-          console.log(response.data)
-        });
-      }, 2500);
+          var self = this
+          setTimeout(function() {
+              axios.put("http://luxinoire.com/api/updateTransaksiPembayaran/"+id, {
+                total_harga: self.total
+              })
+              .then(response => {
+                console.log(response.data)
+              });
+          },500);
+      });
     },
 
     save () {
@@ -474,6 +470,7 @@ export default {
           })
           .then(response => {
             console.log(response.data)
+            this.hitungTotal(this.kode)
           });
 
         } else {
@@ -493,9 +490,9 @@ export default {
             })
             .then(response => {
               console.log(response.data)
+              this.hitungTotal(this.kode)
             });
           }
-          this.hitungTotal(this.kode)
           this.reloadData()
           this.close()
     },
